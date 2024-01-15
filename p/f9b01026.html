@@ -1,0 +1,323 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>【Python】利用Python解析xml文件，提取标签内指定信息 | FantasyBoyce's Blog</title><meta name="keywords" content="Python,解析xml"><meta name="author" content="FantasyBoyce"><meta name="copyright" content="FantasyBoyce"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 前言&amp;emsp;&amp;emsp;python解析处理xml文件的接口都在xml标准库中，其中包含了如下六种子模块。本篇博客，将以模块中的xml.etree.ElementTree子模块，对xml文件进行解析，并提取其中想要的关键信息。  引用于: https:&#x2F;&#x2F;docs.python.org&#x2F;zh-cn&#x2F;3&#x2F;library&#x2F;xml.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Python】利用Python解析xml文件，提取标签内指定信息">
+<meta property="og:url" content="https://blogs.boycechen.cn/p/f9b01026.html">
+<meta property="og:site_name" content="FantasyBoyce&#39;s Blog">
+<meta property="og:description" content="1. 前言&amp;emsp;&amp;emsp;python解析处理xml文件的接口都在xml标准库中，其中包含了如下六种子模块。本篇博客，将以模块中的xml.etree.ElementTree子模块，对xml文件进行解析，并提取其中想要的关键信息。  引用于: https:&#x2F;&#x2F;docs.python.org&#x2F;zh-cn&#x2F;3&#x2F;library&#x2F;xml.html">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://api.likepoems.com/img/mc">
+<meta property="article:published_time" content="2021-03-23T12:04:30.000Z">
+<meta property="article:modified_time" content="2022-11-14T13:28:55.908Z">
+<meta property="article:author" content="FantasyBoyce">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="解析xml">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://api.likepoems.com/img/mc"><link rel="shortcut icon" href="/img/favicon-32x32.ico"><link rel="canonical" href="https://blogs.boycechen.cn/p/f9b01026"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="kJbCbAaPzCknpcMOYWqAdkwRCLahc9aXFx__1AnCI6I"/><meta name="baidu-site-verification" content="codeva-nGbTY60lcI"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?74839281369bd71576632cf182b4ee5e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=187660263"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '187660263');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: {"limitDay":180,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: FantasyBoyce","link":"链接: ","source":"来源: FantasyBoyce's Blog","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.bootcdn.net/ajax/libs/jquery/3.6.3/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.8.1/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.bootcdn.net/ajax/libs/justifiedGallery/3.8.1/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js',
+      css: 'https://cdn.bootcdn.net/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2022-11-14 21:28:55'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const fontSizeVal = saveToLocal.get('global-font-size')
+    if (fontSizeVal !== undefined) {
+      document.documentElement.style.setProperty('--global-font-size', fontSizeVal + 'px')
+    }
+    })(window)</script><style type="text/css">.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body{left:-66px!important}.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover{left:0!important}</style><meta name="generator" content="Hexo 5.4.2"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" data-lazy-src="/img/avatar.gif" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">53</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">85</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://api.likepoems.com/img/mc')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">FantasyBoyce's Blog</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">【Python】利用Python解析xml文件，提取标签内指定信息</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-03-23T12:04:30.000Z" title="发表于 2021-03-23 20:04:30">2021-03-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-11-14T13:28:55.908Z" title="更新于 2022-11-14 21:28:55">2022-11-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Python/">Python</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.3k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>&emsp;&emsp;python解析处理xml文件的接口都在<code>xml</code>标准库中，其中包含了如下六种子模块。本篇博客，将以模块中的<code>xml.etree.ElementTree</code>子模块，对xml文件进行解析，并提取其中想要的关键信息。</p>
+<blockquote>
+<p>引用于: <a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/xml.html">https://docs.python.org/zh-cn/3/library/xml.html</a></p>
+</blockquote>
+<span id="more"></span>
+
+<ul>
+<li>xml.etree.ElementTree： ElementTree API，一个简单而轻量级的XML处理器</li>
+<li>xml.dom：DOM API 定义</li>
+<li>xml.dom.minidom：最小的 DOM 实现</li>
+<li>xml.dom.pulldom：支持构建部分 DOM 树</li>
+<li>xml.sax：SAX2 基类和便利函数</li>
+<li>xml.parsers.expat：Expat解析器绑定</li>
+</ul>
+<hr>
+<h1 id="2-实现步骤"><a href="#2-实现步骤" class="headerlink" title="2. 实现步骤"></a>2. 实现步骤</h1><h2 id="2-1-示例xml文件"><a href="#2-1-示例xml文件" class="headerlink" title="2.1. 示例xml文件"></a>2.1. 示例xml文件</h2><p>&emsp;&emsp;首先，定义了一个如下所示内容的xml文件，可用于接口url地址和入参定义的配置。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">rests</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">service</span> <span class="attr">path</span>=<span class="string">&quot;/api/v1&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">operation</span> <span class="attr">path</span>=<span class="string">&quot;/authentication&quot;</span> <span class="attr">name</span>=<span class="string">&quot;authentication&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>account<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>password<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>verifycode<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">operation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">operation</span> <span class="attr">path</span>=<span class="string">&quot;/queryuser&quot;</span> <span class="attr">name</span>=<span class="string">&quot;queryuser&quot;</span> <span class="attr">method</span>=<span class="string">&quot;get&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>username<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">operation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">operation</span> <span class="attr">path</span>=<span class="string">&quot;/adduser&quot;</span> <span class="attr">name</span>=<span class="string">&quot;adduser&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>username<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>password<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>role<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>groupid<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">operation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">operation</span> <span class="attr">path</span>=<span class="string">&quot;/addgroup&quot;</span> <span class="attr">name</span>=<span class="string">&quot;addgroup&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>groupname<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>function<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>description<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">operation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">operation</span> <span class="attr">path</span>=<span class="string">&quot;/delgroupbyid&quot;</span> <span class="attr">name</span>=<span class="string">&quot;delgroupbyid&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">param</span>&gt;</span>groupid<span class="tag">&lt;/<span class="name">param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">operation</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">service</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">rests</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="2-2-代码实现"><a href="#2-2-代码实现" class="headerlink" title="2.2. 代码实现"></a>2.2. 代码实现</h2><ol>
+<li><p>Python解析xml文件的第一步，首先当然是要加载该文件。导入xml.etree.cElementTree包之后，通过调用parse()方法，即可加载指定的xml文件。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入包</span></span><br><span class="line"><span class="keyword">import</span> xml.etree.cElementTree <span class="keyword">as</span> ET</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定要解析的文件</span></span><br><span class="line">file = <span class="string">&#x27;./test.xml&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 利用parse方法，生成一个ElementTree类型的实例化对象</span></span><br><span class="line">root = ET.parse(file)</span><br><span class="line">Out[<span class="number">5</span>]: &lt;<span class="keyword">class</span> <span class="string">&#x27;xml.etree.ElementTree.ElementTree&#x27;</span>&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li><p>通过分析上述自定义的xml文件内容，可得知：</p>
+</li>
+</ol>
+<ul>
+<li>service是一个大标签对，它有一个path属性，相当于是接口url的根路径。</li>
+<li>所有的接口定义，都在service这个大标签对内。</li>
+<li>每一个接口名称、地址、方法以及接口入参，都是分别存在于单独的一个operation标签对中。</li>
+</ul>
+<ol start="3">
+<li><p>接下来，我们就需要先获取service标签对中的所有operation子标签了。可利用findal()方法，查找到所有的指定标签名称。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取</span></span><br><span class="line">service_list = root.findall(<span class="string">&#x27;service&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(service_list))</span><br><span class="line"><span class="comment"># 由于上述xml文件中只有一个service标签对，所以长度是1</span></span><br><span class="line">Out[<span class="number">11</span>]: <span class="number">1</span></span><br></pre></td></tr></table></figure></li>
+<li><p>到这里，咱们已经获取到文件中的所有service标签了，它是一个列表类型，所以需要通过循环遍历，进一步解析各个service标签内容。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果一个xml文件中，有多个service大标签，则需要通过for循环来遍历。</span></span><br><span class="line"><span class="keyword">for</span> serivce <span class="keyword">in</span> service_list:</span><br><span class="line">    <span class="built_in">print</span>(service)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 由于上述示例xml文件只有一个serivce大标签，则直接通过列表下标，获取service。</span></span><br><span class="line">service = service_list[<span class="number">0</span>]</span><br></pre></td></tr></table></figure></li>
+<li><p>此时的service，是一个具体的对象，它有一个字典长度是1的attrib属性；同时还有5个元素，即对应着它里面的5个operation子标签，咱们可以通过for循环来获取它。<br><img src= "/img/loading.gif" data-lazy-src="https://ae01.alicdn.com/kf/U32762978945248c4bdf590645f9bcb90W.jpg" alt="service对象内容"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取service标签的path属性值</span></span><br><span class="line">service.attrib[<span class="string">&#x27;path&#x27;</span>]</span><br><span class="line">Out[<span class="number">12</span>]: <span class="string">&#x27;/api/v1&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 以第3个接口为例，获取该接口的属性、文本等信息。</span></span><br><span class="line"><span class="comment"># 最终代码，会以for循环的形式实现</span></span><br><span class="line">operation = service[<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取接口名称属性</span></span><br><span class="line">operation.attrib[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">Out[<span class="number">18</span>]: <span class="string">&#x27;adduser&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取接口全路径属性</span></span><br><span class="line">service.attrib[<span class="string">&#x27;path&#x27;</span>] + operation.attrib[<span class="string">&#x27;path&#x27;</span>]</span><br><span class="line">Out[<span class="number">19</span>]: <span class="string">&#x27;/api/v1/adduser&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取接口调用方法属性</span></span><br><span class="line">operation.attrib[<span class="string">&#x27;method&#x27;</span>]</span><br><span class="line">Out[<span class="number">20</span>]: <span class="string">&#x27;post&#x27;</span></span><br></pre></td></tr></table></figure></li>
+<li><p>最后，咱们还剩下接口的入参没有获取到，接口的入参，都保存在operation标签中的param子标签内，且是以文本的形式存储的。所以，通过for循环获取到param子标签后，再获取其中的text属性即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> param <span class="keyword">in</span> operation:</span><br><span class="line">    <span class="built_in">print</span>(param.text)</span><br><span class="line">Out[<span class="number">21</span>]: </span><br><span class="line">username</span><br><span class="line">password</span><br><span class="line">role</span><br><span class="line">groupid</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="3-整体源码"><a href="#3-整体源码" class="headerlink" title="3. 整体源码"></a>3. 整体源码</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">import</span> xml.etree.cElementTree <span class="keyword">as</span> ET</span><br><span class="line"><span class="keyword">except</span> ImportError:</span><br><span class="line">    <span class="keyword">import</span> xml.etree.ElementTree <span class="keyword">as</span> ET</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_interface_list</span>(<span class="params">root</span>):</span><br><span class="line">    service_list = root.findall(<span class="string">&#x27;service&#x27;</span>)</span><br><span class="line">    <span class="keyword">for</span> service_tag <span class="keyword">in</span> service_list:</span><br><span class="line">        service_path = service_tag.attrib[<span class="string">&#x27;path&#x27;</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> opration_tag <span class="keyword">in</span> service_tag:</span><br><span class="line">            interface_name = opration_tag.attrib[<span class="string">&#x27;name&#x27;</span>]</span><br><span class="line">            interface_path = service_path + opration_tag.attrib[<span class="string">&#x27;path&#x27;</span>]</span><br><span class="line">            interface_method = opration_tag.attrib[<span class="string">&#x27;method&#x27;</span>]</span><br><span class="line">            param = []</span><br><span class="line">            <span class="keyword">for</span> param_tag <span class="keyword">in</span> opration_tag:</span><br><span class="line">                param.append(param_tag.text)</span><br><span class="line">            </span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;接口名称:”<span class="subst">&#123;interface_name&#125;</span>,接口调用方法:<span class="subst">&#123;interface_method&#125;</span>,接口url:<span class="subst">&#123;interface_path&#125;</span>, 接口入参:<span class="subst">&#123;param&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    xml_file = <span class="string">&#x27;./test.xml&#x27;</span></span><br><span class="line">    root_tag = <span class="string">&#x27;service&#x27;</span></span><br><span class="line">    attr = <span class="string">&#x27;name&#x27;</span></span><br><span class="line">    </span><br><span class="line">    interface_xml = ET.parse(xml_file)</span><br><span class="line">    get_interface_list(interface_xml)</span><br></pre></td></tr></table></figure>
+
+<h1 id="4-运行效果"><a href="#4-运行效果" class="headerlink" title="4. 运行效果"></a>4. 运行效果</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">接口名称:authentication,接口调用方法:post,接口地址:/api/v1/authentication, 接口入参:[<span class="string">&#x27;account&#x27;</span>, <span class="string">&#x27;password&#x27;</span>, <span class="string">&#x27;verifycode&#x27;</span>]</span><br><span class="line">接口名称:queryuser,接口调用方法:get,接口地址:/api/v1/queryuser, 接口入参:[<span class="string">&#x27;username&#x27;</span>]</span><br><span class="line">接口名称:adduser,接口调用方法:post,接口地址:/api/v1/adduser, 接口入参:[<span class="string">&#x27;username&#x27;</span>, <span class="string">&#x27;password&#x27;</span>, <span class="string">&#x27;role&#x27;</span>, <span class="string">&#x27;groupid&#x27;</span>]</span><br><span class="line">接口名称:addgroup,接口调用方法:post,接口地址:/api/v1/addgroup, 接口入参:[<span class="string">&#x27;groupname&#x27;</span>, <span class="string">&#x27;function&#x27;</span>, <span class="string">&#x27;description&#x27;</span>]</span><br><span class="line">接口名称:delgroupbyid,接口调用方法:post,接口地址:/api/v1/delgroupbyid, 接口入参:[<span class="string">&#x27;groupid&#x27;</span>]</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">FantasyBoyce</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn/p/f9b01026.html">https://blogs.boycechen.cn/p/f9b01026.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blogs.boycechen.cn" target="_blank">FantasyBoyce's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/%E8%A7%A3%E6%9E%90xml/">解析xml</a></div><div class="post_share"><div class="social-share" data-image="https://api.likepoems.com/img/mc" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.bootcdn.net/ajax/libs/social-share.js/1.0.16/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button button--animated"><i class="fas fa-qrcode"></i> 打赏</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechatpay.png" target="_blank"><img class="post-qr-code-img" data-lazy-src="/img/wechatpay.png" alt="WechatPay"/></a><div class="post-qr-code-desc">WechatPay</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" data-lazy-src="/img/alipay.png" alt="Alipay"/></a><div class="post-qr-code-desc">Alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/p/91c89f1d.html"><img class="prev-cover" data-lazy-src="https://api.likepoems.com/img/mc" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">【Linux】树莓派arm64位Ubuntu系统基于docker安装MariaDB数据库</div></div></a></div><div class="next-post pull-right"><a href="/p/47ab775c.html"><img class="next-cover" data-lazy-src="https://bing.ioliu.cn/v1/rand" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">【Python】如何利用Python连接Linux，远程执行命令并获取输出信息</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/p/da16c9e5.html" title="【Python】利用Python+pyexif库获取以及修改照片EXIF信息"><img class="cover" data-lazy-src="https://bing.ioliu.cn/v1/rand" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2022-11-14</div><div class="title">【Python】利用Python+pyexif库获取以及修改照片EXIF信息</div></div></a></div><div><a href="/p/bc1414df.html" title="【Python】利用requests_toolbelt库发送multipart类型的请求和上传文件"><img class="cover" data-lazy-src="https://api.likepoems.com/img/mc" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2023-03-07</div><div class="title">【Python】利用requests_toolbelt库发送multipart类型的请求和上传文件</div></div></a></div><div><a href="/p/d4615dd5.html" title="【Python】利用requests模块获取全国省市区的经纬度信息"><img class="cover" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2022-11-14</div><div class="title">【Python】利用requests模块获取全国省市区的经纬度信息</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" data-lazy-src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">FantasyBoyce</div><div class="author-info__description">博学之，审问之，慎思之，明辨之，笃行之！</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">53</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">85</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">9</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/fantasyboyce"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/fantasyboyce" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:jasonis0428@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的后花园 ヾ (@^▽^@) ノ<br/>﹎ ┈ ┈ .o┈ ﹎  ﹎.. ○<br/>﹎┈﹎ ●  ○ .﹎ ﹎o▂▃▅▆<br/>┈ ┈ /█\/▓\ ﹎ ┈ ﹎﹎ ┈ ﹎ <br/>▅▆▇█████▇▆▅▃▂┈﹎<br/></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-%E5%89%8D%E8%A8%80"><span class="toc-text">1. 前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="toc-text">2. 实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-%E7%A4%BA%E4%BE%8Bxml%E6%96%87%E4%BB%B6"><span class="toc-text">2.1. 示例xml文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">2.2. 代码实现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-%E6%95%B4%E4%BD%93%E6%BA%90%E7%A0%81"><span class="toc-text">3. 整体源码</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-%E8%BF%90%E8%A1%8C%E6%95%88%E6%9E%9C"><span class="toc-text">4. 运行效果</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/bf4fa918.html" title="【Performance】09.性能测试技术历练篇之Java诊断工具Arthas">【Performance】09.性能测试技术历练篇之Java诊断工具Arthas</a><time datetime="2022-11-13T11:32:42.000Z" title="发表于 2022-11-13 19:32:42">2022-11-13</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/683c1dd9.html" title="【Performance】08.性能测试技术历练篇之性能分析神器JProfile">【Performance】08.性能测试技术历练篇之性能分析神器JProfile</a><time datetime="2022-10-03T00:21:49.000Z" title="发表于 2022-10-03 08:21:49">2022-10-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/f25d7b6e.html" title="【Performance】07.性能测试技术历练篇之性能监控工具">【Performance】07.性能测试技术历练篇之性能监控工具</a><time datetime="2022-08-24T13:31:38.000Z" title="发表于 2022-08-24 21:31:38">2022-08-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/7bc6027.html" title="【Performance】06.性能测试技术磨合篇之脚本执行和结果分析">【Performance】06.性能测试技术磨合篇之脚本执行和结果分析</a><time datetime="2022-07-17T11:31:33.000Z" title="发表于 2022-07-17 19:31:33">2022-07-17</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/5914cf6e.html" title="【Performance】05-性能测试技术磨合篇之脚本录制和调试">【Performance】05-性能测试技术磨合篇之脚本录制和调试</a><time datetime="2022-06-29T06:51:27.000Z" title="发表于 2022-06-29 14:51:27">2022-06-29</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2024 By FantasyBoyce</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br>
+<img src="https://blogs.boycechen.cn/img/beian.png">
+<a href="https://beian.miit.gov.cn/" style="color:#f72b07" target="_blank">湘ICP备20007680号</a>
+</br></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="font-plus" type="button" title="放大字体"><i class="fas fa-plus"></i></button><button id="font-minus" type="button" title="缩小字体"><i class="fas fa-minus"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/instant.page/5.1.1/instantpage.min.js" type="module"></script><script src="https://cdn.bootcdn.net/ajax/libs/vanilla-lazyload/17.8.3/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.bootcdn.net/ajax/libs/pangu/4.0.7/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><script>var preloader = {
+  endLoading: () => {
+    document.body.style.overflow = 'auto';
+    document.getElementById('loading-box').classList.add("loaded")
+  },
+  initLoading: () => {
+    document.body.style.overflow = '';
+    document.getElementById('loading-box').classList.remove("loaded")
+
+  }
+}
+window.addEventListener('load',preloader.endLoading())</script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    getScript('https://cdn.bootcdn.net/ajax/libs/mermaid/9.3.0/mermaid.min.js').then(() => {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      true && mermaid.init()
+    })
+  }
+}</script></div><div class="aplayer no-destroy" data-id="8001067963" data-server="tencent" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="random" data-preload="auto" data-autoplay="false" muted></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.bootcdn.net/ajax/libs/butterfly-extsrc/1.1.3/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.bootcdn.net/ajax/libs/butterfly-extsrc/1.1.3/click-heart.min.js" async="async" mobile="false"></script><link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/aplayer/1.10.1/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.bootcdn.net/ajax/libs/aplayer/1.10.1/APlayer.min.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/meting/2.0.1/Meting.min.js"></script><script src="https://cdn.bootcdn.net/ajax/libs/pjax/0.2.8/pjax.min.js"></script><script>let pjaxSelectors = [
+  'title',
+  '#config-diff',
+  '#body-wrap',
+  '#rightside-config-hide',
+  '#rightside-config-show',
+  '.js-pjax'
+]
+
+if (false) {
+  pjaxSelectors.unshift('meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]')
+}
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: true,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  if (typeof gtag === 'function') {
+    gtag('config', '187660263', {'page_path': window.location.pathname});
+  }
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // Analytics
+  if (false) {
+    MtaH5.pgv()
+  }
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+
+document.addEventListener('pjax:send', function () {
+  typeof preloader === 'object' && preloader.initLoading()
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
