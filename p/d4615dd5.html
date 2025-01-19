@@ -1,0 +1,474 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>【Python】利用 requests 模块获取全国省市区的经纬度信息 | FantasyBoyce's Blog</title><meta name="author" content="FantasyBoyce"><meta name="copyright" content="FantasyBoyce"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 前言 xxxxxxxxxx140&amp;amp;nbsp;1# --coding: utf-8--2&amp;quot;&amp;quot;&amp;quot;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;&amp;#x3D;3@author : BoyceChen4@date &amp;amp;nbsp; : 2022&amp;#x2F;05&amp;#x2F;03 10:30:335@desc"><link rel="shortcut icon" href="/img/favicon-32x32.ico"><link rel="canonical" href="https://blogs.boycechen.cn/p/d4615dd5.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?74839281369bd71576632cf182b4ee5e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=187660263"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '187660263');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: {"limitDay":180,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '【Python】利用 requests 模块获取全国省市区的经纬度信息',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-12-30 17:01:15'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><style type="text/css">.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body{left:-66px!important}.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover{left:0!important}</style><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.gif" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">94</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://api.dujin.org/pic/fengjing/')"><nav id="nav"><span id="blog-info"><a href="/" title="FantasyBoyce's Blog"><span class="site-name">FantasyBoyce's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">【Python】利用 requests 模块获取全国省市区的经纬度信息</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-05T11:42:20.000Z" title="发表于 2021-02-05 19:42:20">2021-02-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-12-30T09:01:15.620Z" title="更新于 2024-12-30 17:01:15">2024-12-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Python/">Python</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>16分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="【Python】利用 requests 模块获取全国省市区的经纬度信息"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="前言">1. 前言</h1>
+<p>xxxxxxxxxx140&nbsp;1# -<em>-coding:
+utf-8-</em>-2"""========================================3@author :
+BoyceChen4@date &nbsp; : 2022/05/03 10:30:335@desc &nbsp; :
+6========================================"""7import json8import
+os9import time10​11import requests12from requests_toolbelt import
+MultipartEncoder13​14from log_recorder import my_logs15​16host =
+'192.168.88.117'17port = '2342'18​19root_path =
+r'D:\99Temp'20​21​22@my_logs.catch23def get_headers(session_id=None,
+content_type=None):24 &nbsp; &nbsp;headers = {25 &nbsp; &nbsp; &nbsp; &nbsp;'Host':
+f'{host}:{port}',26 &nbsp; &nbsp; &nbsp; &nbsp;'Accept': 'application/json, text/plain,
+<em>/</em>',27 &nbsp; &nbsp; &nbsp; &nbsp;'User-Agent': 'Mozilla/5.0 (Windows NT 10.0;
+Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '28 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;'Chrome/88.0.4324.150 Safari/537.36',29 &nbsp; &nbsp; &nbsp; &nbsp;'Content-Type':
+'application/json',30 &nbsp; &nbsp; &nbsp; &nbsp;'Origin': f'http://{host}:{port}',31 &nbsp; &nbsp; &nbsp;
+&nbsp;'Referer': f'http://{host}:{port}/auth/login',32 &nbsp; &nbsp; &nbsp;
+&nbsp;'Accept-Encoding': 'gzip, deflate',33 &nbsp; &nbsp; &nbsp; &nbsp;'Accept-Language':
+'zh-CN,zh;q=0.9'34 &nbsp; }35 &nbsp; &nbsp;if session_id is not None:36 &nbsp; &nbsp; &nbsp;
+&nbsp;headers["X-Session-ID"] = session_id37​38 &nbsp; &nbsp;if content_type is not
+None:39 &nbsp; &nbsp; &nbsp; &nbsp;headers["Content-Type"] = content_type40​41 &nbsp; &nbsp;return
+headers42​43​44@my_logs.catch45class UserLogin:46 &nbsp; &nbsp;def
+<strong>init</strong>(self, username, password):47 &nbsp; &nbsp; &nbsp;
+&nbsp;self.album_info = {} 48 &nbsp; &nbsp; &nbsp; &nbsp;self.username = username49 &nbsp; &nbsp; &nbsp;
+&nbsp;self.password = password50 &nbsp; &nbsp; &nbsp; &nbsp;# self.session = None51 &nbsp; &nbsp; &nbsp;
+&nbsp;self.session_id = ""52​53 &nbsp; &nbsp;def login_action (self):54 &nbsp; &nbsp; &nbsp; &nbsp;login_url
+= f'http://{host}:{port}/api/v1/session'55 &nbsp; &nbsp; &nbsp; &nbsp;payload = {"username":
+self.username, "password": self.password} 56 &nbsp; &nbsp; &nbsp; &nbsp;with
+requests.Session () as self.session:57 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;r =
+self.session.post (login_url, headers=get_headers (),
+data=json.dumps (payload)) 58​59 &nbsp; &nbsp; &nbsp; &nbsp;# 如果状态不是 200，则说明登录失败 60
+&nbsp; &nbsp; &nbsp; &nbsp;if 200 == r.status_code:61 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.info ("登录成功！") 62 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.session_id =
+r.headers.get ("X-Session-Id") 63 &nbsp; &nbsp; &nbsp; &nbsp;else:64 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.error (f"登录失败！{r.content.decode ('utf-8')}") 65​66 &nbsp; &nbsp;def
+create_albums (self, name):67 &nbsp; &nbsp; &nbsp; &nbsp;url =
+f'http://{host}:{port}/api/v1/albums'68 &nbsp; &nbsp; &nbsp; &nbsp;payload = {"Title": name,
+"Favorite": False} 69 &nbsp; &nbsp; &nbsp; &nbsp;r = self.session.post (url,
+headers=get_headers (self.session_id), data=json.dumps (payload)) 70​71 &nbsp; &nbsp;
+&nbsp; &nbsp;# 创建相册后自动获取一次当前所有的相册集列表 72 &nbsp; &nbsp; &nbsp;
+&nbsp;self.get_all_albums () 73​74 &nbsp; &nbsp; &nbsp; &nbsp;return r.status_code75​76 &nbsp; &nbsp;def
+upload_file (self, album_name, file_list):77 &nbsp; &nbsp; &nbsp; &nbsp;timestamp =
+int (time.time () * 1000) 78 &nbsp; &nbsp; &nbsp; &nbsp;# 上传一张照片有两个动作，上传和移动 79
+&nbsp; &nbsp; &nbsp; &nbsp;upload_url = f"http://{host}:{port}/api/v1/upload/{timestamp}"80
+&nbsp; &nbsp; &nbsp; &nbsp;move_url =
+f"http://{host}:{port}/api/v1/import/upload/{timestamp}"81 &nbsp; &nbsp; &nbsp; &nbsp;#
+如果相册集不存在，则创建一次 82 &nbsp; &nbsp; &nbsp; &nbsp;if album not in
+self.album_info.keys ():83 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;status =
+self.create_albums (album) 84 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if 200 == status:85 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.info (f"相册集创建成功：{album}") 86 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;else:87 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp;my_logs.info (f"相册集创建失败：{album}") 88​89 &nbsp; &nbsp; &nbsp; &nbsp;uid =
+self.album_info [album_name] 90​91 &nbsp; &nbsp; &nbsp; &nbsp;for files in file_list:92 &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp;upload_data = MultipartEncoder (93 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;fields={94 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;"files": (95 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;f"files={files}",
+open (os.path.join (root_path, album_name, files), 'rb'), 'image/jpeg'),96
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; } 97 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ) 98​99 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;move_data = {"move": True,
+"albums": [uid]} 100​101 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;r = self.session.post (upload_url,
+data=upload_data,102 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;headers=get_headers (self.session_id,
+content_type=upload_data.content_type)) 103​104 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if 200 ==
+r.status_code:105 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;# 如果上传成功，再移动 106 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.info (f"上传成功，相册名称：{album}，图片名称：{files}") 107 &nbsp; &nbsp;
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;r2 = self.session.post (move_url, data=json.dumps (move_data),
+headers=get_headers (self.session_id)) 108 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;if 200 ==
+r2.status_code:109 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.info (f"移动成功，图片名称：{files}") 110 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;else:111
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.warning (f"移动失败，图片名称：{files}，返回信息：{r2.content.decode ('utf-8')}") 112​113
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;else:114 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+&nbsp;my_logs.warning (f"上传失败，相册名称：{album}，图片名称：{files}") 115​116
+&nbsp; &nbsp;def get_all_albums (self):117 &nbsp; &nbsp; &nbsp; &nbsp;__max_num = 500118 &nbsp; &nbsp; &nbsp; &nbsp;url =
+f"http://{host}:{port}/api/v1/albums?count={__max_num}&amp;offset=0&amp;q=&amp;category=&amp;type=album&amp;order=name"119
+&nbsp; &nbsp; &nbsp; &nbsp;r = self.session.get (url=url,
+headers=get_headers (self.session_id)) 120 &nbsp; &nbsp; &nbsp; &nbsp;if 200 ==
+r.status_code:121 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;content =
+json.loads (r.content.decode ('utf-8')) 122 &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;for c in content:123
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;self.album_info [c ["Title"]] = c ['UID'] 124​125​126if
+<strong>name</strong> == '<strong>main</strong>':127 &nbsp; &nbsp;imp_num =
+0128​129 &nbsp; &nbsp;users = UserLogin ('admin', '123456') 130 &nbsp;
+&nbsp;users.login_action () 131 &nbsp; &nbsp;local_album_list = os.listdir (root_path) 132
+&nbsp; &nbsp;for album in local_album_list:133 &nbsp; &nbsp; &nbsp; &nbsp;#
+先获取当前的相册列表，如果没有则创建，否则跳过 134 &nbsp; &nbsp; &nbsp;
+&nbsp;users.get_all_albums () 135 &nbsp; &nbsp; &nbsp; &nbsp;flist =
+os.listdir (os.path.join (root_path, album)) 136 &nbsp; &nbsp; &nbsp;
+&nbsp;users.upload_file (album_name=album, file_list=flist) 137 &nbsp; &nbsp; &nbsp; &nbsp;imp_num
++= len (flist) 138​139 &nbsp;
+&nbsp;my_logs.info (f"已完成导入，共：{imp_num} 张！") 140​python</p>
+<h2 id="场景效果">1.1. 场景效果</h2>
+<p>  基于阿里云提供的三个省市区信息接口，依次提取其中的关键信息，将全国各区县的经纬度信息保存至 Excel 表格中。</p>
+<h2 id="场景流程">1.2. 场景流程</h2>
+<pre class="mermaid">graph TD
+A(Start)--&gt;B[获取全国省级信息] --&gt; C[以省级编码作为入参,获取省内市级信息] --&gt; D[以市级编码作为入参,获取市内区县信息] --&gt; E[解析整理获取到的数据,写入Excel表格] --&gt; Z(END)</pre>
+<hr>
+<h1 id="工具与环境">2. 工具与环境</h1>
+<table>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 23%">
+<col style="width: 69%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>名称</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> 1</td>
+<td>Pycharm</td>
+<td>IDE，调试编写 Python 脚本</td>
+</tr>
+<tr class="even">
+<td> 2</td>
+<td>JSON 在线格式化工具</td>
+<td>工具地址：<a target="_blank" rel="noopener" href="https://www.bejson.com/">https://www.bejson.com/</a></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="接口地址分析">3. 接口地址分析</h1>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">获取省级信息接口</span><br><span class="line">http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/csv/100000_province.json</span><br><span class="line"></span><br><span class="line">获取市级信息接口，以重庆市为例</span><br><span class="line">http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/csv/500000_city.json</span><br><span class="line"></span><br><span class="line">获取区县信息接口，以重庆市辖区为例</span><br><span class="line">http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/csv/500100_district.json</span><br></pre></td></tr></tbody></table></figure>
+<p>  首先，综合对比三个接口的 URL 地址发现，在编号之前的部分，都是相同的，所以可以在代码中定义一个常量：<code>base_url</code>，之后所有的接口请求 URL 地址，都可以基于这个常量进行拼接。
+  接着分析省级信息接口，由于获取省级信息的接口只有这一个，且编号只能为 100000 不可更改，所以省级信息的接口地址相当于也是固定的，在方法实现中，无需定义入参。
+  然后观察获取市级信息接口地址，后面的 500000 是重庆市的编码，city 是表示获取城市信息，所以在获取不同城市信息的时候，只要把接口地址中的数字替换成对应的城市编码即可。
+  最后，获取区县信息接口地址也同上，500100 是重庆市辖区编码，district 表示获取区县信息，获取其他区县信息的时候，只要把数字替换成区县编码即可。</p>
+<hr>
+<h1 id="代码实现">4. 代码实现</h1>
+<h2 id="解析json信息功能">4.1. 解析 json 信息功能</h2>
+<p>  以上接口返回的内容示例如下。 </p><figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">	<span class="attr">"rows"</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"440000"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">107131199</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">23.125178</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">113.280637</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"广东省"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"province"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"中华人民共和国"</span></span><br><span class="line">	<span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"430000"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">67158313</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">28.19409</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">112.982279</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"湖南省"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"province"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"中华人民共和国"</span></span><br><span class="line">	<span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"130000"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">106816280</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">38.045474</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">114.502461</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"河北省"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"province"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"中华人民共和国"</span></span><br><span class="line">	<span class="punctuation">}</span></span><br><span class="line">		<span class="comment">/*** 部分省略 ***/</span></span><br><span class="line">	<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">	<span class="attr">"total"</span><span class="punctuation">:</span> <span class="number">34</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure><p></p>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">	<span class="attr">"rows"</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"430600"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">6136430</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">29.37029</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">113.132855</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"岳阳市"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"city"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"湖南省"</span></span><br><span class="line">	<span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"430400"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">7193113</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">26.900358</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">112.607693</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"衡阳市"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"city"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"湖南省"</span></span><br><span class="line">	<span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"430100"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">7095345</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">28.19409</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">112.982279</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"长沙市"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"city"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"湖南省"</span></span><br><span class="line">	<span class="punctuation">}</span></span><br><span class="line">		<span class="comment">/*** 部分省略 ***/</span></span><br><span class="line">	<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">	<span class="attr">"total"</span><span class="punctuation">:</span> <span class="number">14</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">	<span class="attr">"rows"</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"500116"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">1200000</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">29.283387</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">106.253156</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"江津区"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"district"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"重庆市市辖区"</span></span><br><span class="line">	<span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"500228"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="number">687525</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">30.672168</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">107.800034</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"梁平县"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"district"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"重庆市市辖区"</span></span><br><span class="line">	<span class="punctuation">}</span><span class="punctuation">,</span> <span class="punctuation">{</span></span><br><span class="line">		<span class="attr">"adcode"</span><span class="punctuation">:</span> <span class="string">"500240"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"people_count_2010"</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lat"</span><span class="punctuation">:</span> <span class="number">29.99853</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"lng"</span><span class="punctuation">:</span> <span class="number">108.112448</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"石柱土家族自治县"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"level"</span><span class="punctuation">:</span> <span class="string">"district"</span><span class="punctuation">,</span></span><br><span class="line">		<span class="attr">"parent"</span><span class="punctuation">:</span> <span class="string">"重庆市市辖区"</span></span><br><span class="line">	<span class="punctuation">}</span></span><br><span class="line">		<span class="comment">/*** 部分省略 ***/</span></span><br><span class="line">	<span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">	<span class="attr">"total"</span><span class="punctuation">:</span> <span class="number">38</span></span><br><span class="line"><span class="punctuation">}</span></span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>  通过对比分析，发现上述三条接口，返回的都是 json 字符串，并且其结构是一样的，不同的只有其中的值而已。所以，只需实现一个方法，就可解析以上三类接口的返回信息。
+  解析 JSON 字符串的代码如下。
+  由于主要数据都存储在 key 为 <code>rows</code> 的 value 中，所以 <code>parse_json</code> 方法在传入参数之后，通过 <code>dict[key]</code> 方法，获取 <code>rows</code> 内的所有 values 数据，再使用 <code>for</code> 循环遍历 values，提取其中的关键信息，最后以元组的形式存入 <code>info</code> 列表中。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">parse_json</span>(<span class="params">json_data</span>):</span><br><span class="line">    info = []</span><br><span class="line">    <span class="keyword">for</span> row <span class="keyword">in</span> json_data[<span class="string">'rows'</span>]:</span><br><span class="line">        name = row[<span class="string">'name'</span>]</span><br><span class="line">        adcode = row[<span class="string">'adcode'</span>]</span><br><span class="line">        lat = row[<span class="string">'lat'</span>]</span><br><span class="line">        lng = row[<span class="string">'lng'</span>]</span><br><span class="line">        level = row[<span class="string">'level'</span>]</span><br><span class="line">        info.append((name, adcode, lat, lng, level))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> info</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h2 id="获取请求头信息">4.2. 获取请求头信息</h2>
+<p>  为了模拟更加真实的不同浏览器访问，可以使每一个请求携带的 header 都不同，而模拟不同浏览器的关键因素，在 header 信息中的 <code>user-agent</code> 部分。所以，可导入 my_fake_useragent 模块，随机生成一个 agent，填入 header 字典中即可。
+</p><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> my_fake_useragent <span class="keyword">import</span> UserAgent</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_headers</span>():</span><br><span class="line">    ua = UserAgent()</span><br><span class="line">    headers = {</span><br><span class="line">        <span class="string">"Accept"</span>: <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,"</span></span><br><span class="line">                  <span class="string">"application/signed-exchange;v=b3;q=0.9"</span>, <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>,</span><br><span class="line">        <span class="string">"Accept-Language"</span>: <span class="string">"zh-CN,zh;q=0.9"</span>, <span class="string">"Connection"</span>: <span class="string">"close"</span>,</span><br><span class="line">        <span class="string">"Host"</span>: <span class="string">"datavmap-public.oss-cn-hangzhou.aliyuncs.com"</span>,</span><br><span class="line">        <span class="string">'User-Agent'</span>: ua.random()    <span class="comment"># 随机生成agent</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> headers</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure><p></p>
+<h2 id="获取省市区信息功能">4.3. 获取省市区信息功能</h2>
+<p>  基于面向对象的思想，对全国省市区经纬度信息定义成为一个类，其属性包含：省级信息、市级信息、区县级信息以及获取这些信息的接口 URL 地址。
+  在类中，定义了三个方法 get_province、get_city、get_district，通过不同的省市区编码，利用 requests 模块，发送 get 请求，分别获取省级、市级、区县级的信息。方法实现比较简单，且大同小异，不做赘述。如有提高程序鲁棒性的需要，可加入 <code>try...except...</code> 方法，对捕获到的异常进行相应处理。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">GetDistrictGPS</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="variable language_">self</span>.province_info = []</span><br><span class="line">        <span class="variable language_">self</span>.city_info = []</span><br><span class="line">        <span class="variable language_">self</span>.district_info = []</span><br><span class="line">        <span class="variable language_">self</span>.base_url = <span class="string">'http://datavmap-public.oss-cn-hangzhou.aliyuncs.com/areas/csv/'</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_province</span>(<span class="params">self</span>):</span><br><span class="line">        province_url = <span class="string">f"<span class="subst">{self.base_url}</span>100000_province.json"</span></span><br><span class="line">        rsp = requests.get(province_url, headers=get_headers(), verify=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="number">200</span> == rsp.status_code:</span><br><span class="line">            <span class="variable language_">self</span>.province_info = parse_json(rsp.json())</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">"省级信息解析完成。"</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f'省级信息获取失败,状态码：<span class="subst">{rsp.status_code}</span>，请求地址：<span class="subst">{province_url}</span>'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_city</span>(<span class="params">self, code</span>):</span><br><span class="line">        city_url = <span class="string">f"<span class="subst">{self.base_url}</span><span class="subst">{code}</span>_city.json"</span></span><br><span class="line">        data = requests.get(city_url, headers=get_headers(), verify=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="number">200</span> == data.status_code:</span><br><span class="line">            <span class="variable language_">self</span>.city_info = parse_json(data.json())</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f'<span class="subst">{code}</span>市级经纬度获取失败,状态码：<span class="subst">{data.status_code}</span>，请求地址：<span class="subst">{city_url}</span>'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_district</span>(<span class="params">self, code</span>):</span><br><span class="line">        dist_url = <span class="string">f"<span class="subst">{self.base_url}</span><span class="subst">{code}</span>_district.json"</span></span><br><span class="line">        data = requests.get(dist_url, headers=get_headers(), verify=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="number">200</span> == data.status_code:</span><br><span class="line">            <span class="variable language_">self</span>.district_info = parse_json(data.json())</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="built_in">print</span>(data.status_code, <span class="string">f'<span class="subst">{code}</span>区县经纬度获取失败'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h2 id="数据写入表格功能">4.4. 数据写入表格功能</h2>
+<p>  可参考：<a href="/p/6e3b1b9.html" target="_blank">《【Python】基于 xlwt/xlrd 和 openpyxl 库分别实现对 Excel 表格的读写功能》</a>博客，修改后的代码如下。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"><span class="string">"""=================================================</span></span><br><span class="line"><span class="string">@Author ：FantasyBoyce</span></span><br><span class="line"><span class="string">@Date   ：2021/2/6 22:11</span></span><br><span class="line"><span class="string">@Desc   ：</span></span><br><span class="line"><span class="string">=================================================="""</span></span><br><span class="line"><span class="keyword">import</span> xlwt</span><br><span class="line"><span class="keyword">import</span> xlrd</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> xlutils.copy <span class="keyword">import</span> copy</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ExcelHandle</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 初始化保存的路径和文件名，此处以当前时间命名，如有其他需求，可自行更改</span></span><br><span class="line">        filename = <span class="string">'{}.xlsx'</span>.<span class="built_in">format</span>(time.strftime(<span class="string">'%Y%m%d%H%M%S'</span>))</span><br><span class="line">        <span class="variable language_">self</span>.path = os.path.join(os.getcwd(), filename)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始化表格的表头字段</span></span><br><span class="line">        <span class="variable language_">self</span>.__init_title = [<span class="string">'省名'</span>, <span class="string">'省级编码'</span>, <span class="string">'市名'</span>, <span class="string">'市级编码'</span>, <span class="string">'区县名称'</span>, <span class="string">'区县编码'</span>, <span class="string">'经度'</span>, <span class="string">'纬度'</span>]</span><br><span class="line">        </span><br><span class="line">        <span class="variable language_">self</span>.__init_templates()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init_templates</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="comment"># 初始化文件，生成一个仅含有表头的表格</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="keyword">if</span> os.path.exists(<span class="variable language_">self</span>.path):</span><br><span class="line">                <span class="comment"># 如果文件已存在，那么先删除</span></span><br><span class="line">                os.remove(<span class="variable language_">self</span>.path)</span><br><span class="line">                <span class="variable language_">self</span>.__init_templates()</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                <span class="comment"># 新建一个工作表对象</span></span><br><span class="line">                workbook = xlwt.Workbook(<span class="variable language_">self</span>.path)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 创建sheet页</span></span><br><span class="line">                sheet = workbook.add_sheet(<span class="string">'全国区县经纬度信息'</span>)</span><br><span class="line">                </span><br><span class="line">                <span class="comment"># 循环之前定义的表头，从第1行第1列开始，依次写入数据</span></span><br><span class="line">                <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(<span class="variable language_">self</span>.__init_title)):</span><br><span class="line">                    sheet.write(<span class="number">0</span>, i, <span class="variable language_">self</span>.__init_title[i])</span><br><span class="line">                </span><br><span class="line">                workbook.save(<span class="variable language_">self</span>.path)</span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="built_in">print</span>(e)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">write_content</span>(<span class="params">self, content</span>):</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            <span class="comment"># 打开表格</span></span><br><span class="line">            workbook = xlrd.open_workbook(<span class="variable language_">self</span>.path)</span><br><span class="line">            <span class="comment"># 获取表格中所有的sheets页，列表类型</span></span><br><span class="line">            sheets_list = workbook.sheet_names()</span><br><span class="line">            </span><br></pre></td></tr></tbody></table></figure>
+<h2 id="主函数入口">4.5. 主函数入口</h2>
+<p>  主入口函数如下。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment"># 实例化一个类的对象</span></span><br><span class="line">    myGPS = GetDistrictGPS()</span><br><span class="line">    myExcel = ExcelHandle()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取全国所有的省级信息，并遍历</span></span><br><span class="line">    myGPS.get_province()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> province <span class="keyword">in</span> myGPS.province_info:</span><br><span class="line">        province_name = province[<span class="number">0</span>]</span><br><span class="line">        province_code = province[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">        <span class="comment"># 获取当前省级的所有市级信息，并遍历</span></span><br><span class="line">        myGPS.get_city(province_code)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> city <span class="keyword">in</span> myGPS.city_info:</span><br><span class="line">            city_name = city[<span class="number">0</span>]</span><br><span class="line">            city_code = city[<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f"正在获取<span class="subst">{province_name}</span><span class="subst">{city_name}</span>信息"</span>)</span><br><span class="line">            myGPS.get_district(city_code)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># 获取当前市级的所有区县级信息，并遍历</span></span><br><span class="line">            <span class="keyword">for</span> dist <span class="keyword">in</span> myGPS.district_info:</span><br><span class="line">                district_name = dist[<span class="number">0</span>]</span><br><span class="line">                district_code = dist[<span class="number">1</span>]</span><br><span class="line">                district_lng = dist[<span class="number">2</span>]</span><br><span class="line">                district_lat = dist[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">                <span class="comment"># 组装数据，写入Excel表格</span></span><br><span class="line">                excel_data = [province_name, province_code, city_name, city_code, district_name, district_code,</span><br><span class="line">                              district_lng, district_lat]</span><br><span class="line"></span><br><span class="line">                myExcel.write_content(excel_data)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<h1 id="最终实现效果">5. 最终实现效果</h1>
+<p>  控制台打印日志如下。 </p><figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">D:\00Software\Python\python.exe D:/02Code/01PyFiles/GenerateGPS/GetDistrctGPS.py</span><br><span class="line">省级信息解析完成。</span><br><span class="line">正在获取江西省九江市信息</span><br><span class="line">正在获取江西省吉安市信息</span><br><span class="line">正在获取江西省抚州市信息</span><br><span class="line">正在获取江西省景德镇市信息</span><br><span class="line">正在获取江西省上饶市信息</span><br><span class="line">正在获取江西省新余市信息</span><br><span class="line">正在获取江西省鹰潭市信息</span><br><span class="line">正在获取江西省萍乡市信息</span><br></pre></td></tr></tbody></table></figure><p></p>
+<p>  Excel 数据写入如下所示。 <img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://ae01.alicdn.com/kf/U9eaf7260625c42b49a02147cf77f8fden.jpg" alt="Excel数据"></p>
+<h1 id="说明">6. 说明</h1>
+<p>  经过实际操作，发现获取全国所有的城市的经纬度，需要发送大约 38000 余条请求，也就意味着要对 Excel 读写 38000 余次。而参考<a href="/p/6e3b1b9.html">《【Python】基于 xlwt/xlrd 和 openpyxl 库分别实现对 Excel 表格的读写功能》</a>博客中的 xlwt 读写效率结果，想要完成这 38000 余条数据的写入，会非常的耗时。
+  所以，在数据写入这一步，将由原来的<code>写入Excel表格</code>修改成<code>写入txt文件</code>，这样一来，不到一分钟，即可获取全国所有省市的经纬度信息。
+  写入 txt 文件的代码十分简单，如下所示。</p>
+<figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">write_file</span>(<span class="params">content</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">'./data.txt'</span>, <span class="string">'a+'</span>, encoding=<span class="string">'utf-8'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.writelines(<span class="built_in">str</span>(content) + <span class="string">'\n'</span>)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+<p>  最后，还需要修改下主函数入口的代码，如下所示。 </p><figure class="highlight python"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 组装数据，写入Excel表格</span></span><br><span class="line">excel_data = [province_name, province_code, city_name, city_code, district_name, district_code,</span><br><span class="line">              district_lng, district_lat]</span><br><span class="line"></span><br><span class="line"><span class="comment"># myExcel.write_content(excel_data)</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f"正在写入：<span class="subst">{province_name}</span><span class="subst">{city_name}</span><span class="subst">{district_name}</span>信息"</span>)</span><br><span class="line">write_file(excel_data)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure><p></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn">FantasyBoyce</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn/p/d4615dd5.html">https://blogs.boycechen.cn/p/d4615dd5.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blogs.boycechen.cn" target="_blank">FantasyBoyce's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python/">Python</a><a class="post-meta__tags" href="/tags/Requests/">Requests</a><a class="post-meta__tags" href="/tags/JSON%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86/">JSON字符串处理</a></div><div class="post_share"><div class="social-share" data-image="https://api.dujin.org/pic/fengjing/" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechatpay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/wechatpay.png" alt="WechatPay"/></a><div class="post-qr-code-desc">WechatPay</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/alipay.png" alt="Alipay"/></a><div class="post-qr-code-desc">Alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/p/528c0f55.html" title="【Python】基于 generate_date 方法生成的日期结果离散性分析与优化"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.paugram.com/bing" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">【Python】基于 generate_date 方法生成的日期结果离散性分析与优化</div></div></a></div><div class="next-post pull-right"><a href="/p/1b1c0bcb.html" title="【Linux】基于树莓派 4B 安装 Ubuntu Server 系统及必要配置"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">【Linux】基于树莓派 4B 安装 Ubuntu Server 系统及必要配置</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/p/da16c9e5.html" title="【Python】利用 Python+pyexif 库获取以及修改照片 EXIF 信息"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.paugram.com/bing" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Python】利用 Python+pyexif 库获取以及修改照片 EXIF 信息</div></div></a></div><div><a href="/p/f9b01026.html" title="【Python】利用 Python 解析 xml 文件，提取标签内指定信息"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Python】利用 Python 解析 xml 文件，提取标签内指定信息</div></div></a></div><div><a href="/p/bc1414df.html" title="【Python】利用 requests_toolbelt 库发送 multipart 类型的请求和上传文件"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Python】利用 requests_toolbelt 库发送 multipart 类型的请求和上传文件</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">FantasyBoyce</div><div class="author-info__description">博学之，审问之，慎思之</br>明辨之，笃行之！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">94</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/fantasyboyce"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/fantasyboyce" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:jasonis0428@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的后花园 ヾ (@^▽^@) ノ<br/></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-text">1. 前言</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E6%95%88%E6%9E%9C"><span class="toc-text">1.1. 场景效果</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%E6%B5%81%E7%A8%8B"><span class="toc-text">1.2. 场景流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B7%A5%E5%85%B7%E4%B8%8E%E7%8E%AF%E5%A2%83"><span class="toc-text">2. 工具与环境</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E5%9C%B0%E5%9D%80%E5%88%86%E6%9E%90"><span class="toc-text">3. 接口地址分析</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="toc-text">4. 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%A7%A3%E6%9E%90json%E4%BF%A1%E6%81%AF%E5%8A%9F%E8%83%BD"><span class="toc-text">4.1. 解析 json 信息功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%A4%B4%E4%BF%A1%E6%81%AF"><span class="toc-text">4.2. 获取请求头信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%9C%81%E5%B8%82%E5%8C%BA%E4%BF%A1%E6%81%AF%E5%8A%9F%E8%83%BD"><span class="toc-text">4.3. 获取省市区信息功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%86%99%E5%85%A5%E8%A1%A8%E6%A0%BC%E5%8A%9F%E8%83%BD"><span class="toc-text">4.4. 数据写入表格功能</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%87%BD%E6%95%B0%E5%85%A5%E5%8F%A3"><span class="toc-text">4.5. 主函数入口</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%9C%80%E7%BB%88%E5%AE%9E%E7%8E%B0%E6%95%88%E6%9E%9C"><span class="toc-text">5. 最终实现效果</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%AF%B4%E6%98%8E"><span class="toc-text">6. 说明</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/7c8c9cc0.html" title="【MATLAB】自学记录之基于某楼栋房价数据绘制三维网格图">【MATLAB】自学记录之基于某楼栋房价数据绘制三维网格图</a><time datetime="2025-01-15T07:29:44.000Z" title="发表于 2025-01-15 15:29:44">2025-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/5deb4750.html" title="【MATLAB】自学记录之读取 DEM 高程数据文件并渲染成三维地形图">【MATLAB】自学记录之读取 DEM 高程数据文件并渲染成三维地形图</a><time datetime="2025-01-05T09:11:02.000Z" title="发表于 2025-01-05 17:11:02">2025-01-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/d25385bc.html" title="【Python】基于 Python 对十六进制数据进行异或和校验计算">【Python】基于 Python 对十六进制数据进行异或和校验计算</a><time datetime="2024-11-27T08:16:03.000Z" title="发表于 2024-11-27 16:16:03">2024-11-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/a6bafcf7.html" title="【Security】基于 Kali 操作系统的常用安全测试工具学习与使用（更新中）">【Security】基于 Kali 操作系统的常用安全测试工具学习与使用（更新中）</a><time datetime="2024-08-03T13:33:34.000Z" title="发表于 2024-08-03 21:33:34">2024-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/bf4fa918.html" title="【Performance】09. 性能测试技术历练篇之 Java 诊断工具 Arthas">【Performance】09. 性能测试技术历练篇之 Java 诊断工具 Arthas</a><time datetime="2022-11-13T11:32:42.000Z" title="发表于 2022-11-13 19:32:42">2022-11-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By FantasyBoyce</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://blogs.boycechen.cn/img/beian.png">
+<a href="https://beian.miit.gov.cn/" style="color:#f72b07" target="_blank">湘ICP备20007680号</a>
+</br></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><div class="aplayer no-destroy" data-id="8001067963" data-server="tencent" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="random" data-preload="auto" data-autoplay="false" muted></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: true,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjax')
+  btf.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '187660263', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

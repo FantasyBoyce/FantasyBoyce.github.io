@@ -1,0 +1,2048 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>【Performance】03. 性能测试技术初探篇之 JMeter 工具使用 | FantasyBoyce's Blog</title><meta name="author" content="FantasyBoyce"><meta name="copyright" content="FantasyBoyce"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 安装配置及启动  jmeter 软件包可在 Apache 官网进行下载，官网地址如下，选择二进制文件（Binaries）进行下载后解压即可，无需安装步骤。 1https:&amp;#x2F;&amp;#x2F;jmeter.apache.org&amp;#x2F;download_jmeter.cgi 在启动 jmeter 之前，需要确保电脑已正"><link rel="shortcut icon" href="/img/favicon-32x32.ico"><link rel="canonical" href="https://blogs.boycechen.cn/p/22fcd8bb.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?74839281369bd71576632cf182b4ee5e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=187660263"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '187660263');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: {"limitDay":180,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '【Performance】03. 性能测试技术初探篇之 JMeter 工具使用',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-12-30 17:01:13'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><style type="text/css">.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body{left:-66px!important}.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover{left:0!important}</style><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.gif" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">94</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://api.dujin.org/pic/fengjing/')"><nav id="nav"><span id="blog-info"><a href="/" title="FantasyBoyce's Blog"><span class="site-name">FantasyBoyce's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">【Performance】03. 性能测试技术初探篇之 JMeter 工具使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-06-02T13:44:02.000Z" title="发表于 2022-06-02 21:44:02">2022-06-02</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-12-30T09:01:13.144Z" title="更新于 2024-12-30 17:01:13">2024-12-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Performance/">Performance</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">9.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>31分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="【Performance】03. 性能测试技术初探篇之 JMeter 工具使用"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="安装配置及启动">1. 安装配置及启动</h1>
+<ol type="1">
+<li><p>jmeter 软件包可在 Apache 官网进行下载，官网地址如下，选择二进制文件（Binaries）进行下载后解压即可，无需安装步骤。</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://jmeter.apache.org/download_jmeter.cgi</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>在启动 jmeter 之前，需要确保电脑已正确安装并配置 Java 环境（建议 Java8+），否则将无法启动。</p></li>
+<li><p>jmeter 执行程序在解压路径内的 bin 目录下，windows 与 Linux/macOS 环境的启动方式有所不同，如下说明。</p>
+<blockquote>
+<p>Windows：
+通过文件管理器进入 apache-jmeter-5.4.3，双击 <code>jmeter.bat</code> 即可（具体路径自行替换）。
+linux/macOS：通过终端，执行命令 <code>cd apache-jmeter-5.4.3\bin &amp;&amp; ./jmeter.sh</code> 即可（具体路径自行替换）。</p>
+</blockquote></li>
+<li><p>如上所说，无论是 windows 还是 Linux/macOS，想要运行 jmeter，就必须进入 jmeter 执行程序所在目录下，否则终端将会 “无法找到此命令” 等提示信息。因此，若要在终端内的任何路径下都能通过一条命令直接启动 jmeter，可通过配置环境变量的方式，来实现该效果。</p>
+<ul>
+<li><p>Windows 配置环境变量 <img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/Windows配置环境变量.webp" alt="Windows配置环境变量"></p></li>
+<li><p>MacOS 配置环境变量 </p><figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 编辑bash_profile文件</span></span><br><span class="line">vi <span class="variable">$HOME</span>/.bash_profile</span><br><span class="line"><span class="comment"># 2. 按i键进入编辑模式，在文件最后添加如下两行内容</span></span><br><span class="line"><span class="built_in">export</span> JMETER_HOME=/Users/hyggeoha/Applications//apache-jmeter-5.4.3 <span class="comment"># 根据个人实际情况修改</span></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$JMETER_HOME</span>/bin</span><br><span class="line"><span class="comment"># 3. 按esc键退出编辑模式后，输入:wq命令以保存并退出。</span></span><br><span class="line"><span class="comment"># 4. 输入如下命令使之生效</span></span><br><span class="line"><span class="built_in">source</span> <span class="variable">$HOME</span>/.bash_profile</span><br></pre></td></tr></tbody></table></figure><p></p></li>
+</ul></li>
+<li><p>以 MacOS 为例，在任意路径打开终端，输入 <code>jmeter</code> 后回车，jmeter 程序即可启动。
+&gt; 注意：启动后，终端窗口不可关闭，否则 jmeter 程序也会随之而退出。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%90%AF%E5%8A%A8jmeter.webp" alt="MacOS下命令行启动jmeter">
+<figcaption aria-hidden="true">MacOS 下命令行启动 jmeter</figcaption>
+</figure></li>
+</ol>
+<hr>
+<h1 id="界面介绍">2. 界面介绍</h1>
+<p>  JMeter 主页面如下图所示，分为标题栏、菜单栏、工具栏、组件树页面、内容页面。
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/JMeter%E4%B8%BB%E9%A1%B5%E9%9D%A2.webp" alt="JMeter主页面"></p>
+<hr>
+<h1 id="常用配置元件介绍">3. 常用配置元件介绍</h1>
+<blockquote>
+<p>参考资料：https://jmeter.apache.org/usermanual/component_reference.html
+## 3.1. 采样器 ### 3.1.1. FTP 请求
+  此采样器可用于发送<code>取回文件</code>或<code>上传文件</code>给 FTP 服务器。当下载文件时，可将文件存储于磁盘（本地文件）和 / 或放在响应数据中。
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/FTP%E8%AF%B7%E6%B1%82%E9%87%87%E6%A0%B7%E5%99%A8%E9%85%8D%E7%BD%AE%E9%A1%B5%E9%9D%A2.webp" alt="FTP请求采样器配置页面"></p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 23%">
+<col style="width: 65%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Server Name or IP</td>
+<td>FTP 服务器的域名或 IP 地址</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Port</td>
+<td>FTP 端口，如果填的端口 &lt;=0，JMeter 则使用默认的 FTP 端口</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Remote File</td>
+<td> 要检索的文件，或上传的目标文件名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Local File</td>
+<td> 要上传的本地文件，或要下载的目标文件（默认服务器文件名称）</td>
+<td style="text-align: center;">上传时必填</td>
+</tr>
+<tr class="even">
+<td> Local File Contents</td>
+<td> 提供上传的文件内容，会覆盖 Local File 属性</td>
+<td style="text-align: center;">上传时必填</td>
+</tr>
+<tr class="odd">
+<td> get/put</td>
+<td> 检索还是上传文件，单选</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Use Binary Mode</td>
+<td> 是否使用二进制模式，默认 ASCII</td>
+<td style="text-align: center;"> 是</td>
+</tr>
+<tr class="odd">
+<td> Save File in Response</td>
+<td> 是否将检索到的文件内容存储在响应数据中</td>
+<td style="text-align: center;">下载时必填</td>
+</tr>
+<tr class="even">
+<td> Username</td>
+<td>FTP 账户用户名</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Password</td>
+<td>FTP 账户密码</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http请求">3.1.2. HTTP 请求</h3>
+<p>  此采样器可用于发送 <code>HTTP/HTTPS</code> 请求给 Web 服务器，以及控制 JMeter 是否解析图像的 HTML 文件和其他嵌入资源，并发送 HTTP 请求来检索它们。如：图像、Applet、样式表（CSS）和从这些文件引用的资源、外部脚本、框架 / 内嵌框架、背景图像（正文、表格、TD、TR）、背景声音等。
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/HTTP请求采样器配置页面.webp" alt="HTTP请求采样器配置页面"></p>
+<table>
+<colgroup>
+<col style="width: 18%">
+<col style="width: 75%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Server</td>
+<td>Web 服务器的域名或 IP 地址（不包含 http 前缀）</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Port</td>
+<td>Web 服务器正在监听的端口，默认值：80</td>
+<td style="text-align: center;"> 否</td>
+</tr>
+<tr class="even">
+<td> Protocol</td>
+<td>HTTP 请求协议，如：HTTP、HTTPS、FILE 等</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Method</td>
+<td> 请求方法，如常见的：GET、POST、DELETE、PUT 等</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Content Encoding</td>
+<td> 要使用的内容编码</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Redirect Automatically</td>
+<td> 将基础 http 协议处理程序设置为自动重定向，设置后不会作为样本出现</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Follow Redirects</td>
+<td> 将基础 http 协议处理程序设置为跟踪重定向（未启用自动重定向时可用）</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Use KeepAlive</td>
+<td> 请求是否保持活动连接</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Use multipart/form-data</td>
+<td> 是否对 POST 请求使用 multipart/form-data 类型数据</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Path</td>
+<td> 资源的请求地址，如果资源需要查询参数，在 Parameters 中进行配置</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Parameters</td>
+<td> 资源请求时所需要的参数，每一个参数都需要有参数名和值</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Body</td>
+<td>HTTP 请求体，</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Files Upload</td>
+<td> 待上传的文件名，如果为空，JMeter 不会发送文件；如果填写，JMeter 会自动以 multipart
+form 形式发送请求</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jdbc请求">3.1.3. JDBC 请求</h3>
+<p>  此采样器可用于将 JDBC 请求（SQL 查询）发送到数据库。在使用它之前，需要添加一个 <code>JDBC Connection Configuration</code> 元件，参见 <a href="#3-4-5-JDBC%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE">3.4.5.
+JDBC 连接配置</a>章节。 <img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/JDBC请求采样器配置页面.webp" alt="JDBC请求采样器配置页面"></p>
+<table>
+<colgroup>
+<col style="width: 21%">
+<col style="width: 60%">
+<col style="width: 18%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Variable Name of Pool declared</td>
+<td> 连接池绑定到的 JMeter 变量的名称，必须与 JDBC 连接配置的<code>变量名称</code>字段一致</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Query Type</td>
+<td> 查询类型，下拉选择，包含：选择语句、更新语句、预准备语句、可调用语句、提交、回滚等</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> SQL 查询</td>
+<td> SQL 查询语句，不需要输入行尾的分号</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Parameter values</td>
+<td> 以逗号分隔的参数值列表</td>
+<td style="text-align: center;">预准备语句和可调用语句必填</td>
+</tr>
+<tr class="even">
+<td> Variable Name</td>
+<td> 以逗号分隔的变量名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Result Variable Name</td>
+<td> 以逗号分隔的结果变量名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Query timeout(s)</td>
+<td> 为查询设置超时（单位：秒），空值表示 0 代表无限制，-1 代表不设置任何查询超时，默认值为 0</td>
+<td style="text-align: center;"> 否</td>
+</tr>
+<tr class="odd">
+<td> Limit ResultSet</td>
+<td> 限制循环访问结果集的行数，空值表示 - 1</td>
+<td style="text-align: center;"> 否</td>
+</tr>
+<tr class="even">
+<td> Handle ResultSet</td>
+<td> 定义如何处理从可调用语句返回的结果集，包含：存储为字符串、存储为对象、计数记录等</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h2 id="逻辑控制器">3.2. 逻辑控制器</h2>
+<blockquote>
+<p>逻辑控制器确定采样器的处理顺序 ### 3.2.1. 事务控制器 (Transaction
+Controller)
+  事务控制器额外生成一个样本，用于测量其子级采样器的测试数据，常用于将单个事务的一个活多个采样器进行归纳合并，便于统计单个事务的样本性能情况。</p>
+</blockquote>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/事务控制器配置示例.webp" alt="事务控制器配置示例">
+<figcaption aria-hidden="true">事务控制器配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 40%">
+<col style="width: 54%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Generate Parent Sample</td>
+<td> 是否生成父样本，如果勾选，将为其子级的采样器生成父级样本，否则子级的采样器将会单独生成样本</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Include duration of timer and pre-post processor in generated
+sample</td>
+<td> 是否在生成样本时包含计时器、预处理器和后置处理器的延迟时间，默认不勾选</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="循环控制器loop-controller">3.2.2. 循环控制器 (Loop
+Controller)</h3>
+<p>  循环控制器下存在子级的控制器或采样器时，JMeter 将会按照循环控制器的设置，循环运行它们一定次数。循环总次数 = 循环计数 * 线程组循环次数。例如：</p>
+<ol type="1">
+<li>线程组循环次数为 2 次，循环控制器循环次数为 3 次，那么循环控制器下的 Homepage 采样器将会被执行 6 次。</li>
+<li>线程组循环次数为 10 次，循环控制器循环次数为无限，那么循环控制器下的 Homepage 采样器将会被无限循环执行。</li>
+<li>线程组循环次数为无限，循环控制器循环次数为 20 次，那么循环控制器下的 Homepage 采样器将会被无限循环执行。</li>
+<li>线程组循环次数为 10 次或无限，且持续时间为 60 秒，循环控制器循环次数为 5 次或无限，那么循环控制器下的 Homepage 采样器将会被无限循环执行，直至 60 秒后停止。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/%E5%BE%AA%E7%8E%AF%E6%8E%A7%E5%88%B6%E5%99%A8%E5%BE%AA%E7%8E%AF%E6%AC%A1%E6%95%B0%E8%AE%A1%E7%AE%97.webp" alt="循环控制器循环次数计算">
+<figcaption aria-hidden="true">循环控制器循环次数计算</figcaption>
+</figure>
+<h3 id="判断控制器if-controller">3.2.3. 判断控制器 (IF Controller)</h3>
+<p>  判断控制器通过配置的判断表达式（计算结果必须为 boolean 值）的执行结果，来控制其子级的配置元件是否运行。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/%E5%88%A4%E6%96%AD%E6%8E%A7%E5%88%B6%E5%99%A8%E9%85%8D%E7%BD%AE%E9%A1%B5%E9%9D%A2.webp" alt="判断控制器配置页面">
+<figcaption aria-hidden="true">判断控制器配置页面</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 24%">
+<col style="width: 71%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Condition</td>
+<td> 默认情况下，填写可返回 boolen 值的 JavaScript 表达式，但也可填写为变量表达式（Interpret
+Condition as Variable Expression 被勾选时）</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Interpret Condition as Variable Expression?</td>
+<td> 此项勾选时，必须在 Condition 中输入计算结果为 <code>true</code> 的表达式（忽略大小写）</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Evaluation for all children</td>
+<td> 子级是否计算，未勾选时，仅在首次进入运行时计算</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h2 id="监听器">3.3. 监听器</h2>
+<h3 id="图表结果">3.3.1. 图表结果</h3>
+<p>  图表结果用于生成一个简单的图表，绘制所有采样器的采样时间，展示的内容包含：当前样本（黑色）、所有样本当前平均值（蓝色）、当前标准差（红色）、吞吐率（绿色）和中位数值（紫色）。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/图表结果示例.webp" alt="图表结果示例">
+<figcaption aria-hidden="true">图表结果示例</figcaption>
+</figure>
+<h3 id="断言结果">3.3.2. 断言结果</h3>
+<p>  断言结果可视化工具展示每一个样本的标签，同时展示测试计划中所有断言的结果。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/断言结果示例.webp" alt="断言结果示例">
+<figcaption aria-hidden="true">断言结果示例</figcaption>
+</figure>
+<h3 id="查看结果树">3.3.3. 查看结果树</h3>
+<p>  查看结果树以树状列表的形式展示所有采样器的响应情况，允许查看每一个样本的请求信息、响应信息、耗时、状态码等，样本状态成功时为绿色，失败时为红色，以此判断各采样器配置的正确性。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/查看结果树页面示例.webp" alt="查看结果树页面示例">
+<figcaption aria-hidden="true">查看结果树页面示例</figcaption>
+</figure>
+<h3 id="聚合报表">3.3.4. 聚合报表</h3>
+<p>  聚合报表（Aggregate
+Report）也称为汇总报表，它为测试计划中每一个不同命名的请求创建一个表行，对于每个请求，汇总响应信息、请求计数、平均值、最大值、最小值、错误率、吞吐量等性能指标信息，性能测试结果的分析数据来源也一般参考于此。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/聚合报表结果示例.webp" alt="聚合报表结果示例">
+<figcaption aria-hidden="true">聚合报表结果示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 12%">
+<col style="width: 80%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>字段名称</th>
+<th>英文名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>标签</td>
+<td> Label</td>
+<td> 采样器的标签名称</td>
+</tr>
+<tr class="even">
+<td>样本</td>
+<td>#Samples</td>
+<td> 具有相同标签的样本发送总数量</td>
+</tr>
+<tr class="odd">
+<td>平均值</td>
+<td> Average</td>
+<td> 该样本的结果集的平均时间</td>
+</tr>
+<tr class="even">
+<td>中位数</td>
+<td> Median</td>
+<td> 该样本结果集的中位数，剩余 50% 至少需要这么长时间</td>
+</tr>
+<tr class="odd">
+<td> 90% 线</td>
+<td> 90%Line</td>
+<td>90% 的样本数量的最长时间，剩余 10% 至少需要这么长时间</td>
+</tr>
+<tr class="even">
+<td> 95% 线</td>
+<td> 95%Line</td>
+<td>95% 的样本数量的最长时间，剩余 5% 至少需要这么长时间</td>
+</tr>
+<tr class="odd">
+<td> 99% 线</td>
+<td> 99%Line</td>
+<td>99% 的样本数量的最长时间，剩余 1% 至少需要这么长时间</td>
+</tr>
+<tr class="even">
+<td>最大值</td>
+<td> Max</td>
+<td> 该样本结果集中的最长时间</td>
+</tr>
+<tr class="odd">
+<td>最小值</td>
+<td> Min</td>
+<td> 该样本结果集中的最短时间</td>
+</tr>
+<tr class="even">
+<td>错误率</td>
+<td> Error%</td>
+<td> 该样本内包含错误请求的百分比</td>
+</tr>
+<tr class="odd">
+<td>吞吐量</td>
+<td> Throughtput</td>
+<td> 以每秒 / 分钟 / 小时的请求数量来衡量服务器的处理能力，当导出为 csv 文件时，单位为：请求 / 秒</td>
+</tr>
+<tr class="even">
+<td>接收速率</td>
+<td> Received KB/s</td>
+<td> 客户端每秒钟接收的千字节数据，衡量客户端与服务端的网络通信能力</td>
+</tr>
+<tr class="odd">
+<td>发送速率</td>
+<td> Send KB/s</td>
+<td> 客户端每秒钟发送的千字节数据，衡量客户端与服务端的网络通信能力</td>
+</tr>
+</tbody>
+</table>
+<h3 id="总结报表">3.3.5. 总结报表</h3>
+<p>  总结报表（Summary
+Report）也称为摘要报表，报表内容与 <a href="#3.3.4. 聚合报表">3.3.4.&nbsp;聚合报表</a>类似，新增了两个字段，如下表所示。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/总结报表结果示例.webp" alt="总结报表结果示例">
+<figcaption aria-hidden="true">总结报表结果示例</figcaption>
+</figure>
+<table>
+<thead>
+<tr class="header">
+<th>字段名称</th>
+<th>英文名称</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>标准偏差</td>
+<td> Std.Dev.</td>
+<td> 该样本的消耗时间的标准偏差</td>
+</tr>
+<tr class="even">
+<td>平均字节大小</td>
+<td> Avg.Btyes</td>
+<td> 该样本响应报文的平均字节大小</td>
+</tr>
+</tbody>
+</table>
+<h3 id="响应时间图">3.3.6. 响应时间图</h3>
+<p>  响应时间图以线状图的形式，将测试过程中的响应时间变化请求绘制成折线图，如果同一个时间戳包含多个样本，则会展示平均值。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/响应时间图示例.webp" alt="响应时间图示例">
+<figcaption aria-hidden="true">响应时间图示例</figcaption>
+</figure>
+<h2 id="配置元件">3.4. 配置元件</h2>
+<h3 id="csv数据集">3.4.1. CSV 数据集</h3>
+<p>  csv 数据集用于从外部文件中按行读取数据，再按照指定分隔符分隔成多个变量，其非常适合处理大量的变量。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/CSV数据集配置示例.webp" alt="CSV数据集配置示例">
+<figcaption aria-hidden="true">CSV 数据集配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 85%">
+<col style="width: 2%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Filename</td>
+<td> 文件名称，建议使用相对路径，并将数据集文件与 jmx 脚本放置在同一层路径下</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> File Encoding</td>
+<td> 文件内容编码</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Variable Names</td>
+<td> 变量名，如有多个，用英文逗号分隔</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Use first line as VariableNames</td>
+<td> 是否读取第一行作为变量名。当 <code>Variable Names</code> 为空时使用，且如果 <code>Variable Names</code> 为空时，数据文件中第一行将被作为变量名使用</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Delimiter</td>
+<td> 内容分隔符，建议使用与数据内容无关的字符</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Allow quoted data</td>
+<td> 是否允许数据包含引号</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Recycle on EOF?</td>
+<td> 文件内容循环结束后是否重新循环</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Stop thread on EOF?</td>
+<td> 文件内容循环结束后是否停止线程</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Sharing mode</td>
+<td> 共享模式<br>All
+threads：文件在所有的线程和线程组之间共享，总打开次数 = 1<br>Current
+thread
+group：当前线程组用到此文件时打开一次，总打开次数 = 用到的线程组数<br>Current
+thread：线程用到此文件时打开一次，总打开次数 = 用到的线程组数 * 线程数</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http缓存管理器">3.4.2. HTTP 缓存管理器</h3>
+<p>  HTTP 缓存管理器用于向其范围内的 HTTP 请求添加缓存功能，以模拟浏览器的缓存功能，每个虚拟用户线程都会生成自己的缓存。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/HTTP缓存管理器配置示例.webp" alt="HTTP缓存管理器配置示例">
+<figcaption aria-hidden="true">HTTP 缓存管理器配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 35%">
+<col style="width: 59%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Clear cache each iteration</td>
+<td> 每次循环时是否清除缓存</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Use Cache Control/Expires header<br>when processing GET
+requests</td>
+<td> 处理 GET 请求时，是否使用缓存控制 / 过期标头</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Max Number of elements in cache</td>
+<td> 缓存中元素的最大数量，缓存的元素越多，该配置元件消耗内存越大，需要<br>适时修改 jmeter 启动脚本中的 <code>-Xmx</code> 选项</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http-cookie管理器">3.4.3. HTTP Cookie 管理器</h3>
+<p>  HTTP Cookie 管理器主要具备以下两个功能：</p>
+<ol type="1">
+<li>模拟网络浏览器一样存储和发送 cookies，例如有一个 HTTP 请求的响应中包含 cookie，那么 HTTP
+Cookie 管理器会自动存储该 cookie，并在后续的 http 请求中使用该 cookie，每一个线程都有自己的 cookies 存储区域。</li>
+<li>允许手动将 cookies 信息添加到 HTTP
+Cookie 管理器中，这部分的 cookies 信息将会被共享于所有线程。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/HTTP%20Cookie管理器配置示例.webp" alt="HTTP Cookie管理器配置示例">
+<figcaption aria-hidden="true">HTTP Cookie 管理器配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 46%">
+<col style="width: 27%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Clear cookie each iteration</td>
+<td> 每次循环时是否清除 cookie</td>
+<td style="text-align: center;"> 是</td>
+</tr>
+<tr class="odd">
+<td> Use Thread Group configuration<br>to control cookie clearing</td>
+<td> 使用线程组配置来控制 cookie 是否清除</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Cookie Policy</td>
+<td> 将用于管理 cookie 的政策，保持默认即可</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Use-Defind Cookies</td>
+<td> 用户自定义的 cookie</td>
+<td style="text-align: center;"> 否（不鼓励，除非你知道你在干什么）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jdbc连接配置">3.4.4. JDBC 连接配置</h3>
+<p>  JDBC 连接配置元件从提供的 JDBC 连接设置创建数据库连接，当业务请求的返回体中未包含后续样本所需的数据，以及需要针对数据库性能进行测试等场景时，就需要用到这个配置元件。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/JDBC连接配置示例.webp" alt="JDBC连接配置示例">
+<figcaption aria-hidden="true">JDBC 连接配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 25%">
+<col style="width: 69%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Variable Name for created pool</td>
+<td> 数据库连接池的变量名</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Max Number of connections</td>
+<td> 连接池中的最大连接数</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Max Wait(ms)</td>
+<td> 最大等待时间（毫秒），如果尝试连接的过程中超时最大等待时间，则连接池就抛出错误</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Time Between Eviction Runs(ms)</td>
+<td> 线程可空闲时间（毫秒），如果当前连接池中某个链接在空闲了指定时间后仍然没有使用，则被物理性的关闭掉</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Auto Commit</td>
+<td> 是否自动提交</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Transaction isolation</td>
+<td> 事务隔离级别</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Preinit Pool</td>
+<td> 连接池会被立即初始化，如果设置为 <code>False（默认）</code>，使用此连接池的 JDBC 请求采样器可能会测量第一个查询的更高响应时间</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Init sql statements separated by new line</td>
+<td>SQL 语句集合，当首次创建物理连接时执行一次</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Test While Idle</td>
+<td> 闲置时测试，保持默认即可</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Soft Min Evictable Idle Time(ms)</td>
+<td> 闲置时间，保持默认即可</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Validation Query</td>
+<td> 校验查询语句，从下拉列表中选择一条简单的语句，验证数据库连接是否仍在响应</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Database URL</td>
+<td> 数据库的 JDBC 连接字符串</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> JDBC Driver class</td>
+<td>JDBC 的驱动类，根据所使用的数据库进行选择，类文件必须在 JMeter/lib 文件夹下存在</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Username</td>
+<td> 数据库连接用户名</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Password</td>
+<td> 数据库连接密码</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Connection Properties</td>
+<td> 数据库建立连接时要设置的连接属性</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="用户自定义变量">3.4.5. 用户自定义变量</h3>
+<p>  用户自定义变量元件允许用户自定义和初始化变量集，供后续的配置元件使用。</p>
+<blockquote>
+<p>注意：</p>
+<ol type="1">
+<li>用户自定义变量配置文件无需指定位置，它会在开始执行测试前进行处理。</li>
+<li>如果一个测试计划中包含多个线程组，请确保对不同的值使用不同的变量名，因为该元件会在线程组之间共享。此外，这些变量在元素处理完毕后才能使用，因此你无法引用在同一元素中定义的变量。</li>
+</ol>
+</blockquote>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/用户自定义变量配置示例.webp" alt="用户自定义变量配置示例">
+<figcaption aria-hidden="true">用户自定义变量配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 77%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> User Defined Variables</td>
+<td> 变量键值对，name 中的内容将放在变量表达式 <code>${...}</code> 构造的括号中，整个 <code>${...}</code> 将会在运行时自动替换成对应的值</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="随机变量">3.4.6. 随机变量</h3>
+<p>随机变量配置元件用于生成随机的数字字符串，并存储在变量中，供后续的配置元件使用。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/随机变量元件配置示例.webp" alt="随机变量元件配置示例">
+<figcaption aria-hidden="true">随机变量元件配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 10%">
+<col style="width: 84%">
+<col style="width: 4%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Variable Name</td>
+<td> 变量名称，用于存储随机字符串值</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Format string</td>
+<td> 指定随机字符串的格式。<br>例如 “000” 将会生成 3 位数的随机字符串，<br>“user_0000” 将会生成类似于 <code>user_0294</code> 的随机字符串</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Minimum Value</td>
+<td> 随机数生成器的取值范围最小值</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Maximum Value</td>
+<td> 随机数生成器的取值范围最大值</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Random Seed</td>
+<td> 随机种子，如果指定了随机种子，并将 Per
+Thread (User) 设置为 <code>True</code>，则每个线程得到的值相同；<br>为空时，将使用随机的默认构造函数生成随机种子</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Per Thread(User)?</td>
+<td> 如果为 <code>False</code>，则生成器在线程组中的所有线程之间共享，否则每个线程都会有自己的随机生成器</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="计数器">3.4.7. 计数器</h3>
+<p>  允许用户添加一个计数器，在整个线程组中进行引用，计数器配置的内容包含：起始点、增量和终止点（含）。计数器将会在起始点循环计数到终止点，循环完成后再次从起始点开始，直至测试结束。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/计数器配置示例.webp" alt="计数器配置示例">
+<figcaption aria-hidden="true">计数器配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 21%">
+<col style="width: 75%">
+<col style="width: 3%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Starting value</td>
+<td> 计数器的起始值，未填时默认为 0</td>
+<td style="text-align: center;"> 否</td>
+</tr>
+<tr class="odd">
+<td> Increment</td>
+<td> 技术增量，默认为 0，表示无增量</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Maximum value</td>
+<td> 计数器的最大值，默认值是 Long 类型</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Format</td>
+<td> 计数器输出的数字格式，例如 “000” 将会生成 3 位数的随机字符串，<br>“user_0000” 将会生成类似于 <code>user_0294</code> 的随机字符串</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Exported Variable Name</td>
+<td> 变量名称，用于存储计数器的值</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Track Counter Independently for each User</td>
+<td> 是否为每个用户单独分配计数器。<br>未选中时，计数器是全局的，第一次迭代时，用户 1 获得 1，用户 2 获得 2，依次类推；<br>若选中，则第一次迭代时，所有用户获得的值均是 1</td>
+<td style="text-align: center;"> 否</td>
+</tr>
+<tr class="even">
+<td> Reset counter on each Thread Group Iteration</td>
+<td> 此选项仅在计数器为每个用户单独分配时有效。<br>选中时，计数器将重置为每个线程组迭代的起始值，当计数器在循环控制器内时将会很有用</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h2 id="断言">3.5. 断言</h2>
+<p>  断言用于对采样器进行额外的检查，并在同一范围内的每个采样器之后进行处理。</p>
+<h3 id="响应断言">3.5.1. 响应断言</h3>
+<p>  响应断言通过配置字符串，与请求报文或响应报文中的各个字段进行比较，根据比较结果，返回断言成功或失败，字符串的模板包含以下两种：</p>
+<ol type="1">
+<li>Contains,Matches：字符串包含或匹配，perl5 风格的正则表达式；</li>
+<li>Equals,Substring：字符串等于或子集，纯文本内容，区分大小写。</li>
+</ol>
+<p>  例：某页面访问正常时，响应体中包含 <code>Pi Dashboard</code> 字段，对应的响应断言配置如下。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/响应断言配置示例.webp" alt="响应断言配置示例">
+<figcaption aria-hidden="true">响应断言配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 89%">
+<col style="width: 2%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Apply to:</td>
+<td> 应用范围：<br>Main sample only：仅应用于主采样器<br>Sub-samples
+only：仅应用于子采样器<br>Main sample and
+sub-sample：应用于两者<br>Jmeter Variable Name to
+use：将赋值给变量名</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Field to Test</td>
+<td> 待测试字段，用于指示 JMeter 要断言测试请求或响应的哪个字段</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Ignore status</td>
+<td> 忽略状态，选中时，在断言测试结果出来之前，默认是成功的</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Pattern Matching Rules</td>
+<td> 模式匹配规则<br>Contains：正则表达式，文本与正则表达式匹配，则为 true<br>Matches：正则表达式，整个文本与正则表达式匹配，则为 true<br>Equals：纯字符串，文本与模式字符串相等时为 true，区分大小写<br>Substring：纯字符串，文本包含模式字符串时为 true，区分大小写</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Pattern to Test</td>
+<td> 模式测试列表，每一条模式都将被测试，当其中一条
+断言失败时，停止断言，断言结果为失败</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Custom failure message</td>
+<td> 自定义失败信息，断言结果失败时，自定替换成您自定义的失败信息</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="持续时间断言">3.5.2. 持续时间断言</h3>
+<p>  持续时间断言用于测试每个响应是否在指定时间内收到，任何消耗超过指定时间（毫秒）的响应，都将被标记为失败的响应。</p>
+<p>  例：访问某页面的请求，通过持续时间断言，验证该页面是否在 5 秒内完成响应。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/持续时间断言配置示例.webp" alt="持续时间断言配置示例">
+<figcaption aria-hidden="true">持续时间断言配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 34%">
+<col style="width: 54%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Duration in Milliseconds</td>
+<td> 可被允许的响应耗时的最大值，单位为毫秒</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="大小断言">3.5.3. 大小断言</h3>
+<p>  大小断言用于测试每个响应的字节大小，可以指定测试比较的类型，包含等于、不等于、大于等于、小于等于、大于、小于等。</p>
+<p>  例：某用户登录的请求，当登录成功时响应报文的字节大小约为 25000Bytes，失败时约为 1041Bytes，大小配置示例如下。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/大小断言配置示例.webp" alt="大小断言配置示例">
+<figcaption aria-hidden="true">大小断言配置示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 83%">
+<col style="width: 3%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Apply to:</td>
+<td> 应用范围：<br>Main sample only：仅应用于主采样器<br>Sub-samples
+only：仅应用于子采样器<br>Main sample and
+sub-sample：应用于两者<br>Jmeter Variable Name to
+use：将赋值给变量名</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Response Size Field to Test</td>
+<td> 待测试响应大小的字段，包含：所有响应内容、响应头、响应体、响应状态码、响应消息等</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Size to bytes</td>
+<td> 待测试的字节大小，支持填写 JMeter 变量名</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Type of Comparison</td>
+<td> 比较类型，测试响应大小是否等于、不等于、大于等于、小于等于、大于、小于指定的字节大小</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="xml断言">3.5.4. XML 断言</h3>
+<p>  XML 断言用于测试响应数据是否由正确的 XML 文档组成，需要注意的是，他不会根据 DTD 或模式语法校验 XML 字段内容。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/XML断言-断言结果输出示例.webp" alt="XML断言-断言结果输出示例">
+<figcaption aria-hidden="true">XML 断言 - 断言结果输出示例</figcaption>
+</figure>
+<h3 id="html断言">3.5.5. HTML 断言</h3>
+<p>  HTML 断言使用 JTidy 检查响应数据的 HTML 语法是否正确。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/HTML断言-断言结果输出示例.webp" alt="HTML断言-断言结果输出示例">
+<figcaption aria-hidden="true">HTML 断言 - 断言结果输出示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 17%">
+<col style="width: 75%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> doctype</td>
+<td> 文档类型，包含 omit（忽略遗留）、auto（自动）、strict（严格）、loose（松散）</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Format</td>
+<td> 响应内容的格式，包含 HTML、XHTML、XML</td>
+<td style="text-align: center;"> 是</td>
+</tr>
+<tr class="even">
+<td> Errors only</td>
+<td> 是否仅注意错误</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Error threshold</td>
+<td> 错误阈值，将响应断言为失败之前的最大错误数量</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Warning threshold</td>
+<td> 警告阈值，将响应断言为失败之前的最大警告数量</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Filename</td>
+<td> 断言报告的文件名</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="xpath断言">3.5.6. XPath 断言</h3>
+<p>  Xpath 断言可用于测试响应体的完整性，可以选择对照 DTD 进行验证，如果该 XPath 存在，则断言为真，断言支持布尔表达式。</p>
+<p>  例：树莓派监控主页面访问成功后，页面左侧包含树莓派本机 IP，可使用如下 XPath 路径表达式进行断言验证。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/XPath断言配置示例.webp" alt="XPath断言配置示例">
+<figcaption aria-hidden="true">XPath 断言配置示例</figcaption>
+</figure>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/XPath断言-断言结果输出示例.webp" alt="XPath断言-断言结果输出示例">
+<figcaption aria-hidden="true"> XPath 断言 - 断言结果输出示例</figcaption>
+</figure>
+<h3 id="比较断言">3.5.7. 比较断言</h3>
+<p>  比较断言可用于比较指定范围内的样本结果，支持比较内容、响应耗时等。</p>
+<blockquote>
+<p>注意：执行测试时不得添加此元件，会消耗大量 CPU、内存等系统资源，严重影响测试结果，仅在调试或验证时使用。</p>
+</blockquote>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/比较断言配置示例.webp" alt="比较断言配置示例">
+<figcaption aria-hidden="true">比较断言配置示例</figcaption>
+</figure>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 81%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Compare Content</td>
+<td> 是否比较响应数据中的内容</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Compare Time</td>
+<td> 如果值 &gt;=0，则检查响应时差是否小于该值，等于 0 时，意味着响应时间必须等于该值，默认为 - 1，即不比较响应耗时</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Comparision Filters</td>
+<td> 比较过滤器，用于从内容中比较字符串。<br>Regex
+String：通过正则表达式匹配到的字符串<br>Substitution：预期的字符串内容</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="json断言">3.5.8. JSON 断言</h3>
+<p>  JSON 断言用于对 JSON 文档进行验证，断言的内容包含如下：</p>
+<ol type="1">
+<li>检查数据是否为 json 格式，如果解析失败，则断言失败；</li>
+<li>使用 <code>Jayway JsonPath 1.2.0</code> 语法以搜索指定的路径，如果路径查找无结果，则断言失败；</li>
+<li>如果在数据中查找到指定的路径，会根据预期值进行比较验证，如果未找到预期值，则断言失败；</li>
+</ol>
+<p>例：系统某接口请求的响应如下所示，若需要断言其中 2 班的第一个学生的姓名，则 JsonPath 表达式可填写如下：</p>
+<ol type="1">
+<li><code>$.student[1].class2[0].name</code></li>
+</ol>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">{</span></span><br><span class="line">  <span class="attr">"student"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">{</span></span><br><span class="line">      <span class="attr">"class1"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"AAA"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"sex"</span><span class="punctuation">:</span> <span class="string">"F"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"20231701001"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"age"</span><span class="punctuation">:</span> <span class="number">15</span></span><br><span class="line">        <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"BBB"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"sex"</span><span class="punctuation">:</span> <span class="string">"F"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"20231701002"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"age"</span><span class="punctuation">:</span> <span class="number">14</span></span><br><span class="line">        <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"CCC"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"sex"</span><span class="punctuation">:</span> <span class="string">"M"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"20231701003"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"age"</span><span class="punctuation">:</span> <span class="number">15</span></span><br><span class="line">        <span class="punctuation">}</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">{</span></span><br><span class="line">      <span class="attr">"class2"</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"DDD"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"sex"</span><span class="punctuation">:</span> <span class="string">"M"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"20231702010"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"age"</span><span class="punctuation">:</span> <span class="number">35</span></span><br><span class="line">        <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"EEE"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"sex"</span><span class="punctuation">:</span> <span class="string">"M"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"20231702011"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"age"</span><span class="punctuation">:</span> <span class="number">33</span></span><br><span class="line">        <span class="punctuation">}</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">{</span></span><br><span class="line">          <span class="attr">"name"</span><span class="punctuation">:</span> <span class="string">"FFF"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"sex"</span><span class="punctuation">:</span> <span class="string">"M"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"id"</span><span class="punctuation">:</span> <span class="string">"20231702012"</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">"age"</span><span class="punctuation">:</span> <span class="number">29</span></span><br><span class="line">        <span class="punctuation">}</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">}</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">}</span></span><br></pre></td></tr></tbody></table></figure>
+<p>  jsonpath 表达式匹配测试的结果如下图。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/JSON断言-jsonpath匹配表达式示例.webp" alt="JSON断言-jsonpath匹配表达式示例">
+<figcaption aria-hidden="true">JSON 断言 - jsonpath 匹配表达式示例</figcaption>
+</figure>
+<table>
+<colgroup>
+<col style="width: 46%">
+<col style="width: 46%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Assert JSON Path exists</td>
+<td> 要断言的 json 元素路径</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Additionally assert value</td>
+<td> 如果要断言某些值，则勾选</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Match as regular expression</td>
+<td> 如果要使用正则表达式来匹配，则勾选</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Expected Value</td>
+<td> 预期值，如果预期值是数组类型，则输入：<code>[]</code></td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Expect null</td>
+<td> 如果预期值为 null，则勾选</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Invert assertion<br>(will fail if above condition met)</td>
+<td> 是否反转断言结果，如果断言结果为成功，则反转结果为失败</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h2 id="定时器">3.6. 定时器</h2>
+<h3 id="常量定时器">3.6.1. 常量定时器</h3>
+<p>  常量定时器可用于业务流程中相邻两个请求有固定等待时间需求的场景，该定时器会应用于所有的线程。</p>
+<p>  例：在系统登录成功后，默认用户等待 5 秒后进行点击<code>个人信息</code>的操作。</p>
+<table>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Thread Delay</td>
+<td> 线程等待的时间，单位为毫秒</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="高斯随机定时器">3.6.2. 高斯随机定时器</h3>
+<p>  此定时器将每个线程请求暂停随机时间，大多数时间间隔分布在特定值附近，总延迟是高斯分布值（平均 0.0 和标准偏差 1.0）乘以制定的偏差值和偏移值的总和。即：生成的随机数，围绕常数偏移量的变化，呈现高斯曲线分布。</p>
+<table>
+<colgroup>
+<col style="width: 30%">
+<col style="width: 57%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Deviation</td>
+<td> 偏差值，单位为毫秒</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Constant Delay Offset</td>
+<td> 除了随机延迟外的固定延迟时间，单位为毫秒</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="均匀随机定时器">3.6.3. 均匀随机定时器</h3>
+<p>  此定时器将每个线程请求暂停随机时间，每个时间间隔的发生概率相同，总延迟是随机值和偏移值的总和。</p>
+<table>
+<colgroup>
+<col style="width: 30%">
+<col style="width: 57%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Random Delay Maximum</td>
+<td> 随机延迟的最大时间，单位为毫秒</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Constant Delay Offset</td>
+<td> 除了随机延迟外的固定延迟时间，单位为毫秒</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h2 id="预处理器">3.7. 预处理器</h2>
+<h3 id="用户参数">3.7.1. 用户参数</h3>
+<p>  用户参数预处理器用于指定单个线程的用户变量的值。对于每个线程，变量将按照顺序分配序列中的值，如果线程数大于值得数量，那么这些变量会重复使用。该元件一般配合线程数进行使用。如果有大量变量的需求，建议使用 <code>CSV数据集</code>元件。</p>
+<p>  例：登录过程中，为每个线程分配一个登录用户。</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 36%">
+<col style="width: 52%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Update Once Per Iteration</td>
+<td> 指示用户参数元素是否每次迭代更新一次</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="jdbc预处理器">3.7.2. JDBC 预处理器</h3>
+<p>  JDBC 预处理器在采样器运行之前，执行特定的 SQL 语句。在 JDBC 采样器需要某些来自数据库中的数据，并且这些数据无法在初始化线程中计算获取时，会非常有用。</p>
+<p>  例：在执行测试之前，清除数据库中的垃圾数据。</p>
+<table>
+<colgroup>
+<col style="width: 23%">
+<col style="width: 69%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Variable Name Bound to Pool</td>
+<td>JDBC 连接配置中的连接池名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Query Type</td>
+<td>SQL 语句类型</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> SQL Query</td>
+<td>SQL 语句，语句中带参数时，使用 <code>?</code> 占位</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Parameter values</td>
+<td>SQL 语句中的参数，JMeter 会自动将 <code>?</code> 替换成对应的参数值，如有多个，用英文逗号分隔</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Parameter types</td>
+<td>SQL 语句中参数的类型，如有多个，用英文逗号分隔</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Variable names</td>
+<td> 变量名称，如有多个，用英文逗号分隔，用于保存从数据库返回的数据值列表</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Result variable name</td>
+<td> 结果变量名称，包含返回数据值的键值变量</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Query timeout</td>
+<td> 查询超时，单位为秒</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Limit ResultSet</td>
+<td> 查询最大数据集</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Handle ResultSet</td>
+<td> 数据集处理方式，包含：存储为字符串、存储为对象、计数等</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="采样器超时">3.7.3. 采样器超时</h3>
+<p>  如果某个采样器样本完成的时间太长，可使用采样器超时预处理器进行控制，在达到指定的时间后样本仍未完成时，该处理器会使其中断。
+&gt;
+超时时间应该合理设置，太长会影响性能结果，太短则可能在正常的测试过程中触发。</p>
+<table>
+<colgroup>
+<col style="width: 19%">
+<col style="width: 69%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Sample Timeout</td>
+<td> 采样器超时时间，如果样本完成时间大于它，则会被中断</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h2 id="后置处理器">3.8. 后置处理器</h2>
+<h3 id="正则表达式提取器">3.8.1. 正则表达式提取器</h3>
+<p>  正则表达式提取器通过使用 Perl 风格的正则表达式，从一个采样器的响应报文中解析指定的内容，并存储为 JMeter 变量，在后续有需要的地方进行引用。</p>
+<p>  例：在系统登录成功后，会生成 token 值（具备有效期和唯一性）存储在浏览器本地缓存中，后续的查询、创建、提交等操作，均需要携带 token 字段，否则后台服务器将会认为该请求未被鉴权，需要重新登录鉴权。</p>
+<table>
+<colgroup>
+<col style="width: 6%">
+<col style="width: 89%">
+<col style="width: 3%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Apply to:</td>
+<td> 应用范围：<br>Main sample only：仅应用于主采样器<br>Sub-samples
+only：仅应用于子采样器<br>Main sample and
+sub-sample：应用于两者<br>Jmeter Variable Name to
+use：将赋值给变量名</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Field to check</td>
+<td> 待检查的字段<br>Body：响应正文，不包含标题<br>Body (unescaped)：响应正文，替换了 HTML 转义代码（非必要时请勿使用，影响性能）<br>Body
+as a
+Document：转换为文本的响应正文（非必要时请勿使用，影响性能）<br>Request
+Headers：请求头<br>Response
+Headers：响应头<br>URL：请求的 URL 地址<br>Response
+Code：响应状态码<br>Response Message：响应信息</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Name of created variable</td>
+<td> 用于存储匹配结果的变量名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Regular Expression</td>
+<td> 正则表达式</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Template</td>
+<td> 用于引用正则表达式中的组，<code>$1$</code> 表示第 1 组，<code>$0$</code> 表示整个表达式匹配的任何内容</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Match No.(0 for Random)</td>
+<td> 匹配序号，0 代表随机，正数 n 代表第 n 个匹配项</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Default Value</td>
+<td> 默认值，当正则表达式未匹配到结果时，使用该默认值</td>
+<td style="text-align: center;">否，但建议填写</td>
+</tr>
+<tr class="odd">
+<td> Use empty default value</td>
+<td> 使用空的默认值，当被选中时，<code>Default Value</code> 字段被清除，正则表达式未匹配到结果的情况下，将使用空字符串代替结果</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<h3 id="xpath2提取器">3.8.2. XPath2 提取器</h3>
+<p>  XPath2 提取器通过 XPath 查询表达式，从结构化响应 XML/(X) HTML 中提取指定的内容。</p>
+<p>  例：系统登录完成后，主页面右上角展示登录用户名的名称，通过以下 XPath 表达式进行内容提取。</p>
+<table>
+<colgroup>
+<col style="width: 22%">
+<col style="width: 74%">
+<col style="width: 3%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Apply to:</td>
+<td> 应用范围：<br>Main sample only：仅应用于主采样器<br>Sub-samples
+only：仅应用于子采样器<br>Main sample and
+sub-sample：应用于两者<br>Jmeter Variable Name to
+use：将赋值给变量名</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Name of created variable</td>
+<td> 用于存储匹配结果的变量名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> XPath Query</td>
+<td>XPath 查询表达式</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Match No.(0 for Random)</td>
+<td> 匹配序号，0 代表随机，正数 n 代表第 n 个匹配项</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Default Value</td>
+<td> 默认值，当正则表达式未匹配到结果时，使用该默认值</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> Namespaces aliases list</td>
+<td> 命名空间列表</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Return entire XPath fragment instead of text content?</td>
+<td> 是否返回整个 XPath 片段而不是文本内容</td>
+<td style="text-align: center;">是</td>
+</tr>
+</tbody>
+</table>
+<h3 id="json提取器">3.8.3. JSON 提取器</h3>
+<p>  JSON 提取器能够从基于 <code>JSON-Path</code> 语法的响应报文中提取指定的数据，此后置处理器与<code>正则表达式提取器</code>很类似，可以非常方便的提取文本内容</p>
+<blockquote>
+<p>该提取器必须作为 HTTP 采样器或其它具有响应的采样器的子级</p>
+</blockquote>
+<p>  例：系统登录成功后，返回 json 格式的响应报文，报文中包含 token 字段，使用如下 json 表达式提取 token 字段对应的值。</p>
+<table>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 78%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>属性</th>
+<th>描述</th>
+<th style="text-align: center;">是否必填</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Name</td>
+<td> 用于组件树页面展示的名称</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Names of created varables</td>
+<td> 用于存储匹配结果的变量名称</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="odd">
+<td> JSON Path Expressions</td>
+<td>JSON 路径表达式</td>
+<td style="text-align: center;">是</td>
+</tr>
+<tr class="even">
+<td> Default Values</td>
+<td> 默认值，当表达式未匹配到结果时，使用该默认值</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="odd">
+<td> Match No.(0 for Random)</td>
+<td> 匹配序号，0 代表随机，正数 n 代表第 n 个匹配项</td>
+<td style="text-align: center;">否</td>
+</tr>
+<tr class="even">
+<td> Compute concatenation var</td>
+<td> 匹配结果是否串联。如果选中，则 JMeter 以 <code>,</code> 作为分隔符，将匹配到的所有结果串联起来，并存储到以 <code>&lt;variable_name&gt;_ALL</code> 变量中</td>
+<td style="text-align: center;">否</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="第三方插件安装">4. 第三方插件安装</h1>
+<p>  当 JMeter 自带的配置元件已经无法满足测试需求时，可通过 JMeter 插件官网，扩展安装更多的第三方插件，甚至可以参考 <code>jmeter_tutorial.pdf</code> 指导文件，自己开发所需要的插件。</p>
+<ol type="1">
+<li><p>访问 JMeter 插件官网，下载 <code>JMeter plugin Manager</code> 插件，并将其拷贝到 jmeter_home/lib/ext 目录下，插件的安装和管理都离不开它。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://jmeter-plugins.org/wiki/PluginsManager/</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>如果是互联网环境，那么可以启动 JMeter 后，点击右上角的插件管理器，直接在线查找、安装。卸载插件。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/22fcd8bb/插件管理器在线使用.webp" alt="插件管理器在线使用">
+<figcaption aria-hidden="true">插件管理器在线使用</figcaption>
+</figure></li>
+<li><p>如果是离线环境，那么可以访问 JMeter 插件官网，查找并下载所需要的插件 <code>jar</code> 包后，同样将其拷贝到 jmeter_home/lib/ext 目录下，重启 JMeter 即可使用。</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://jmeter-plugins.org/wiki/catalogue/</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+<hr>
+<blockquote>
+<p>性能测试工具 JMeter 合集
+<a class="article-sort-item-img" href="/p/8a2bea76.html" target="_blank">【Performance】01.
+性能测试技术初探篇之性能测试介绍</a>
+<a class="article-sort-item-img" href="/p/616bf269.html" target="_blank">【Performance】02.
+性能测试技术初探篇之常用性能测试工具</a>
+<a class="article-sort-item-img" href="/p/22fcd8bb.html" target="_blank">【Performance】03.
+性能测试技术初探篇之 JMeter 工具使用</a>
+<a class="article-sort-item-img" href="/p/3177ee85.html" target="_blank">【Performance】04.
+性能测试技术磨合篇之性能测试场景设计</a>
+<a class="article-sort-item-img" href="/p/5914cf6e.html" target="_blank">【Performance】05.
+性能测试技术磨合篇之脚本录制和调试</a>
+<a class="article-sort-item-img" href="/p/7bc6027.html" target="_blank">【Performance】06.
+性能测试技术磨合篇之脚本执行和结果分析</a>
+<a class="article-sort-item-img" href="/p/f25d7b6e.html" target="_blank">【Performance】07.
+性能测试技术历练篇之性能监控工具</a>
+<a class="article-sort-item-img" href="/p/683c1dd9.html" target="_blank">【Performance】08.
+性能测试技术历练篇之性能分析神器 JProfile</a>
+<a class="article-sort-item-img" href="/p/bf4fa918.html" target="_blank">【Performance】09.
+性能测试技术历练篇之 Java 诊断工具 Arthas</a></p>
+</blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn">FantasyBoyce</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn/p/22fcd8bb.html">https://blogs.boycechen.cn/p/22fcd8bb.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blogs.boycechen.cn" target="_blank">FantasyBoyce's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%80%A7%E8%83%BD%E6%B5%8B%E8%AF%95/">性能测试</a><a class="post-meta__tags" href="/tags/Jmeter/">Jmeter</a></div><div class="post_share"><div class="social-share" data-image="https://api.dujin.org/pic/fengjing/" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechatpay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/wechatpay.png" alt="WechatPay"/></a><div class="post-qr-code-desc">WechatPay</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/alipay.png" alt="Alipay"/></a><div class="post-qr-code-desc">Alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/p/616bf269.html" title="【Performance】02. 性能测试技术初探篇之常用性能测试工具"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.paugram.com/bing" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">【Performance】02. 性能测试技术初探篇之常用性能测试工具</div></div></a></div><div class="next-post pull-right"><a href="/p/3177ee85.html" title="【Performance】04. 性能测试技术磨合篇之性能测试场景设计"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">【Performance】04. 性能测试技术磨合篇之性能测试场景设计</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/p/c87e53d8.html" title="【Performance】Jmeter 工具结合浏览器代理插件，录制性能测试脚本"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.paugram.com/bing" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Performance】Jmeter 工具结合浏览器代理插件，录制性能测试脚本</div></div></a></div><div><a href="/p/ba4396b6.html" title="【Performance】Jmeter 录制脚本时过滤静态资源"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Performance】Jmeter 录制脚本时过滤静态资源</div></div></a></div><div><a href="/p/8a2bea76.html" title="【Performance】01. 性能测试技术初探篇之性能测试介绍"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.paugram.com/bing" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Performance】01. 性能测试技术初探篇之性能测试介绍</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">FantasyBoyce</div><div class="author-info__description">博学之，审问之，慎思之</br>明辨之，笃行之！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">94</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/fantasyboyce"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/fantasyboyce" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:jasonis0428@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的后花园 ヾ (@^▽^@) ノ<br/></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E5%8F%8A%E5%90%AF%E5%8A%A8"><span class="toc-text">1. 安装配置及启动</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%95%8C%E9%9D%A2%E4%BB%8B%E7%BB%8D"><span class="toc-text">2. 界面介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE%E5%85%83%E4%BB%B6%E4%BB%8B%E7%BB%8D"><span class="toc-text">3. 常用配置元件介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#http%E8%AF%B7%E6%B1%82"><span class="toc-text">3.1.2. HTTP 请求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdbc%E8%AF%B7%E6%B1%82"><span class="toc-text">3.1.3. JDBC 请求</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="toc-text">3.2. 逻辑控制器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E6%8E%A7%E5%88%B6%E5%99%A8loop-controller"><span class="toc-text">3.2.2. 循环控制器 (Loop
+Controller)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A4%E6%96%AD%E6%8E%A7%E5%88%B6%E5%99%A8if-controller"><span class="toc-text">3.2.3. 判断控制器 (IF Controller)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%91%E5%90%AC%E5%99%A8"><span class="toc-text">3.3. 监听器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%BE%E8%A1%A8%E7%BB%93%E6%9E%9C"><span class="toc-text">3.3.1. 图表结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%AD%E8%A8%80%E7%BB%93%E6%9E%9C"><span class="toc-text">3.3.2. 断言结果</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9F%A5%E7%9C%8B%E7%BB%93%E6%9E%9C%E6%A0%91"><span class="toc-text">3.3.3. 查看结果树</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%81%9A%E5%90%88%E6%8A%A5%E8%A1%A8"><span class="toc-text">3.3.4. 聚合报表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E6%8A%A5%E8%A1%A8"><span class="toc-text">3.3.5. 总结报表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%E5%9B%BE"><span class="toc-text">3.3.6. 响应时间图</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E5%85%83%E4%BB%B6"><span class="toc-text">3.4. 配置元件</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#csv%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-text">3.4.1. CSV 数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#http%E7%BC%93%E5%AD%98%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text">3.4.2. HTTP 缓存管理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#http-cookie%E7%AE%A1%E7%90%86%E5%99%A8"><span class="toc-text">3.4.3. HTTP Cookie 管理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdbc%E8%BF%9E%E6%8E%A5%E9%85%8D%E7%BD%AE"><span class="toc-text">3.4.4. JDBC 连接配置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="toc-text">3.4.5. 用户自定义变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F"><span class="toc-text">3.4.6. 随机变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="toc-text">3.4.7. 计数器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%96%AD%E8%A8%80"><span class="toc-text">3.5. 断言</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%93%8D%E5%BA%94%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.1. 响应断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%81%E7%BB%AD%E6%97%B6%E9%97%B4%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.2. 持续时间断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%A7%E5%B0%8F%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.3. 大小断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xml%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.4. XML 断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#html%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.5. HTML 断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xpath%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.6. XPath 断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%94%E8%BE%83%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.7. 比较断言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json%E6%96%AD%E8%A8%80"><span class="toc-text">3.5.8. JSON 断言</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">3.6. 定时器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E9%87%8F%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">3.6.1. 常量定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%AB%98%E6%96%AF%E9%9A%8F%E6%9C%BA%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">3.6.2. 高斯随机定时器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9D%87%E5%8C%80%E9%9A%8F%E6%9C%BA%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="toc-text">3.6.3. 均匀随机定时器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">3.7. 预处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%94%A8%E6%88%B7%E5%8F%82%E6%95%B0"><span class="toc-text">3.7.1. 用户参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#jdbc%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">3.7.2. JDBC 预处理器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%87%E6%A0%B7%E5%99%A8%E8%B6%85%E6%97%B6"><span class="toc-text">3.7.3. 采样器超时</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%90%8E%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8"><span class="toc-text">3.8. 后置处理器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%8F%90%E5%8F%96%E5%99%A8"><span class="toc-text">3.8.1. 正则表达式提取器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#xpath2%E6%8F%90%E5%8F%96%E5%99%A8"><span class="toc-text">3.8.2. XPath2 提取器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#json%E6%8F%90%E5%8F%96%E5%99%A8"><span class="toc-text">3.8.3. JSON 提取器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E6%96%B9%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="toc-text">4. 第三方插件安装</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/7c8c9cc0.html" title="【MATLAB】自学记录之基于某楼栋房价数据绘制三维网格图">【MATLAB】自学记录之基于某楼栋房价数据绘制三维网格图</a><time datetime="2025-01-15T07:29:44.000Z" title="发表于 2025-01-15 15:29:44">2025-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/5deb4750.html" title="【MATLAB】自学记录之读取 DEM 高程数据文件并渲染成三维地形图">【MATLAB】自学记录之读取 DEM 高程数据文件并渲染成三维地形图</a><time datetime="2025-01-05T09:11:02.000Z" title="发表于 2025-01-05 17:11:02">2025-01-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/d25385bc.html" title="【Python】基于 Python 对十六进制数据进行异或和校验计算">【Python】基于 Python 对十六进制数据进行异或和校验计算</a><time datetime="2024-11-27T08:16:03.000Z" title="发表于 2024-11-27 16:16:03">2024-11-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/a6bafcf7.html" title="【Security】基于 Kali 操作系统的常用安全测试工具学习与使用（更新中）">【Security】基于 Kali 操作系统的常用安全测试工具学习与使用（更新中）</a><time datetime="2024-08-03T13:33:34.000Z" title="发表于 2024-08-03 21:33:34">2024-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/bf4fa918.html" title="【Performance】09. 性能测试技术历练篇之 Java 诊断工具 Arthas">【Performance】09. 性能测试技术历练篇之 Java 诊断工具 Arthas</a><time datetime="2022-11-13T11:32:42.000Z" title="发表于 2022-11-13 19:32:42">2022-11-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By FantasyBoyce</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://blogs.boycechen.cn/img/beian.png">
+<a href="https://beian.miit.gov.cn/" style="color:#f72b07" target="_blank">湘ICP备20007680号</a>
+</br></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><div class="aplayer no-destroy" data-id="8001067963" data-server="tencent" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="random" data-preload="auto" data-autoplay="false" muted></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: true,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjax')
+  btf.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '187660263', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>

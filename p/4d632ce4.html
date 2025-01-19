@@ -1,0 +1,563 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>【Security】基于 Burpsuite 工具中的 intruder 执行暴力破解 | FantasyBoyce's Blog</title><meta name="author" content="FantasyBoyce"><meta name="copyright" content="FantasyBoyce"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="1. 测试工具          序号 工具 版本 备注      1 JDK 环境  1.7 及以上  burpsuite 工具运行所需    2 Burpsuite 1.4 及以上 请根据个人情况，选择 Community 或 Professional 版本    3 DVWA  当前最新是 1"><link rel="shortcut icon" href="/img/favicon-32x32.ico"><link rel="canonical" href="https://blogs.boycechen.cn/p/4d632ce4.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//hm.baidu.com"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?74839281369bd71576632cf182b4ee5e";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=187660263"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '187660263');
+</script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: {"limitDay":180,"position":"top","messagePrev":"It has been","messageNext":"days since the last update, the content of the article may be outdated."},
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":500},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: true,
+  islazyload: true,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '【Security】基于 Burpsuite 工具中的 intruder 执行暴力破解',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-12-30 17:01:18'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><style type="text/css">.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body{left:-66px!important}.aplayer.aplayer-fixed.aplayer-narrow .aplayer-body:hover{left:0!important}</style><!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.gif" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">94</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://api.dujin.org/pic/fengjing/')"><nav id="nav"><span id="blog-info"><a href="/" title="FantasyBoyce's Blog"><span class="site-name">FantasyBoyce's Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="/resume/"><i class="fa-fw fa fa-user"></i><span> 简历</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">【Security】基于 Burpsuite 工具中的 intruder 执行暴力破解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2020-04-19T15:39:33.000Z" title="发表于 2020-04-19 23:39:33">2020-04-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-12-30T09:01:18.900Z" title="更新于 2024-12-30 17:01:18">2024-12-30</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Security/">Security</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="【Security】基于 Burpsuite 工具中的 intruder 执行暴力破解"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="测试工具">1. 测试工具</h1>
+<table>
+<colgroup>
+<col style="width: 2%">
+<col style="width: 4%">
+<col style="width: 6%">
+<col style="width: 86%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>序号</th>
+<th>工具</th>
+<th>版本</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> 1</td>
+<td>JDK 环境</td>
+<td> 1.7 及以上</td>
+<td> burpsuite 工具运行所需</td>
+</tr>
+<tr class="even">
+<td> 2</td>
+<td>Burpsuite</td>
+<td>1.4 及以上</td>
+<td>请根据个人情况，选择 Community 或 Professional 版本</td>
+</tr>
+<tr class="odd">
+<td> 3</td>
+<td>DVWA</td>
+<td> 当前最新是 1.9</td>
+<td> 集成多种渗透测试工具，可根据测试场景，调整应用程序的安全等级，环境部署参考：<a href="/p/bb712987.html" target="_blank">【安全】【测试工具搭建】Ubuntu 中基于 DVWA 程序搭建个人安全测试环境</a></td>
+</tr>
+</tbody>
+</table>
+<span id="more"></span>
+<hr>
+<h1 id="常规暴力破解">2. 常规暴力破解</h1>
+<p>对于一般或中小型项目软件来说，用户进行登录操作时，发送的鉴权请求可能只有一条，以用户账号、密码、验证码（若有）作为入参，发送给服务器进行验证，根据鉴权结果返回登录失败或成功。此类登录请求，只需在 intruder 中选取请求中的密码参数作为载荷标记，配置好对应的载荷内容，即可执行破解操作。</p>
+<h2 id="测试流程">2.1. 测试流程</h2>
+<ol type="1">
+<li>拦截登录请求，并发送到 intruder 中。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/登录请求发送至intruder.webp" alt="登录请求发送至intruder">
+<figcaption aria-hidden="true">登录请求发送至 intruder</figcaption>
+</figure>
+<ol start="2" type="1">
+<li> 选择攻击类型。</li>
+</ol>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 49%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attack type<br>（类型）</th>
+<th>Payload set<br>（载荷集）</th>
+<th>描述</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td> Sniper</td>
+<td> 最多 1 个</td>
+<td>单位置单遍历，即所有载荷标记使用同一个载荷集，每次攻击只替换一个载荷标记。攻击总数 = 载荷标记数量
+* 载荷集清单数量</td>
+<td>只有一个位置需要替换，或者多个位置依次替换</td>
+</tr>
+<tr class="even">
+<td> Battering ram</td>
+<td> 最多 1 个</td>
+<td>多位置同时遍历，即所有载荷标记使用同一个载荷集，且每次攻击会同时替换所有载荷标记。
+攻击总数 = 载荷集清单数量</td>
+<td>存在多个位置需要替换，且多个位置被替换内容需要同时一致</td>
+</tr>
+<tr class="odd">
+<td> Pitchfork</td>
+<td> 至少 2 个</td>
+<td>各个载荷标记使用对应的载荷集，每次同时取载荷集中的第 N 个元素替换对应的标记。攻击总数 = 所有载荷集清单最少数量</td>
+<td> 2 个以上位置同时被替换，被替换的内容存在一一对应关系</td>
+</tr>
+<tr class="even">
+<td> Cluster bomb</td>
+<td> 至少 2 个</td>
+<td>集束爆破，攻击总数等于所有载荷集清单数量的笛卡尔积。</td>
+<td>2 个以上位置同时被替换，被替换的内容无需存在对应关系，可自由组合。</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/攻击模式.webp" alt="攻击模式">
+<figcaption aria-hidden="true">攻击模式</figcaption>
+</figure>
+<ol start="3" type="1">
+<li>选取载荷标记。 &gt;
+add：手动选取一个载荷标记位置，以成对的 § 符号标记起来。 &gt;
+clear：清除所有的载荷标记位置。 &gt;
+auto：工具自动选取需要被替换的标记位置。 &gt;
+refresh：刷新编辑器中的内容，使之语法高亮。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/选取载荷标记.webp" alt="选取载荷标记">
+<figcaption aria-hidden="true">选取载荷标记</figcaption>
+</figure>
+<ol start="4" type="1">
+<li>添加载荷内容。 &gt;
+paste：从系统粘贴板中获取数据，点击 paste 按钮添加。 &gt;
+load：选择并读取本地文件，每一行作为一条数据。 &gt;
+remove：移除所选数据。 &gt; clear：清除所有数据。 &gt;
+add：单个数据添加。 &gt; add from
+list：从工具自带的数据列表中添加。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/添加载荷内容.webp" alt="添加载荷内容">
+<figcaption aria-hidden="true">添加载荷内容</figcaption>
+</figure>
+<ol start="5" type="1">
+<li>执行破解，查看破解请求。 点击 Start
+attack 按钮，即可开始破解（为了提高破解几率，可先在 options 中将线程数设置为 1）。
+从图中可发现，在执行第 86 次替换时，返回的长度 length 比其他的要少；再通过查看该攻击请求的返回报文，发现该请求已经正确返回了登录后的网页源码；与此同时，在所有的攻击请求中，没有一条返回 “账号被锁定” 或 “IP 地址被锁定” 的错误信息（<strong><em>具体返回内容，请根据项目实际情况判断</em></strong>）。
+故由此得出，该系统的登录模块，未做任何防暴力破解的措施，极易被破解出密码。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/执行破解.webp" alt="执行破解">
+<figcaption aria-hidden="true">执行破解</figcaption>
+</figure>
+<hr>
+<h1 id="特殊登录请求暴力破解">3. 特殊登录请求暴力破解</h1>
+<ol type="1">
+<li>在接触到的某些大型项目中，为了进一步提高项目的安全防护，可能会在登录验证请求之前，先向服务器发送一条获取随机值的请求，服务器返回随机值后，登录验证请求会携带此随机值，连同登录用户账号、密码、验证码（若有），一同发送给服务器进行鉴权验证，并且此随机值长度一般可达到 32 位或以上，同时可能存在时间限制，以此来达到双重保障安全登录及长时间未登录销毁登录会话的目的。
+  模拟登录流程如下：</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/基于会话有效期的登录请求流程.webp" alt="基于会话有效期的登录请求流程">
+<figcaption aria-hidden="true">基于会话有效期的登录请求流程</figcaption>
+</figure>
+<ol start="2" type="1">
+<li>如果此时咱们使用上述的常规暴力破解方式，未将登录随机值放入登录请求中，服务器一般会返回 “登录会话失效” 或者 “登录随机值已过期” 等等消息，而此类测试结果并不能作为项目存在防暴力破解机制的依据。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/同一user_token发起登录请求验证.webp" alt="同一user_token发起登录请求验证">
+<figcaption aria-hidden="true">同一 user_token 发起登录请求验证</figcaption>
+</figure>
+<ol start="3" type="1">
+<li>因此，咱们可以使用到 burpsuite 工具中自带的宏录制的功能，将获取随机值的请求录制成宏，然后再将宏命令应用到 intruder 功能中，便可让登录请求入参携带由服务器返回的随机值，达到 “欺骗” 服务器正常登录的目的。</li>
+</ol>
+<h2 id="测试流程-1">3.1. 测试流程</h2>
+<blockquote>
+<p>大体流程与常规破解一致，区别在于前期的配置宏命令 (步骤 4~10)。 1.
+以 DVWA 程序中的 Brute
+Force 为例，输入 username 和 password，点击 Login 按钮，触发一次登录请求。</p>
+</blockquote>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/发起登录请求.webp" alt="发起登录请求">
+<figcaption aria-hidden="true">发起登录请求</figcaption>
+</figure>
+<ol start="2" type="1">
+<li>在 burpsuite 中可看出，登录请求中的参数，不仅包含了用户名、密码，还包含了一条 user_token，并且是随机的。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/分析登录请求1.webp" alt="分析登录请求1">
+<figcaption aria-hidden="true">分析登录请求 1</figcaption>
+</figure>
+<ol start="3" type="1">
+<li><p> 登录失败后，在获取新页面的返回报文中，可看到新生成了一条 user_token。<br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/分析登录请求2.webp" alt="分析登录请求2"></p></li>
+<li><p>进入 Project
+options-&gt;Sessions-&gt;Marcos 中，点击 Add 新增一条 Marco。</p></li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/新增一条Macro.webp" alt="新增一条Macro">
+<figcaption aria-hidden="true">新增一条 Macro</figcaption>
+</figure>
+<ol start="5" type="1">
+<li> 在 Macro Editior 界面中，点击 Record
+macro 按钮，在弹出的窗口中，选择那条获取登录随机值的请求，点击 OK。</li>
+</ol>
+<p><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/配置获取随机值的请求.webp" alt="配置获取随机值的请求"> 6. 在 Macro Editior 界面中，输入 Macro
+description，在 Macro items 中选择上述保存的请求，点击 Configure
+item 按钮进入 Configure Macro Item 界面。</p>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/配置宏命令位置.webp" alt="配置宏命令位置">
+<figcaption aria-hidden="true">配置宏命令位置</figcaption>
+</figure>
+<ol start="7" type="1">
+<li>点击 Add 按钮，在弹出的 Define Custom
+Paramter 界面中，选择那串 user_token 随机值，工具将自动填写随机值的起止位置表达式，记录下来备用。点击 OK 按钮保存，回到工具主界面。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/配置随机值位置.webp" alt="配置随机值位置">
+<figcaption aria-hidden="true">配置随机值位置</figcaption>
+</figure>
+<ol start="8" type="1">
+<li>在 Project options 的 Session Handling
+Rules 中，新增一条规则。在弹出的 Session handling rule
+editor 窗口中，取一个规则的名字，在 Rule Actions 中点击 Add，选择 Run a
+macro。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/新建会话处理规则.webp" alt="新建会话处理规则">
+<figcaption aria-hidden="true">新建会话处理规则</figcaption>
+</figure>
+<ol start="9" type="1">
+<li>在 Session handling action
+editor 中，自动填上了第 1~4 步配置的 macro，选中即可，下面的选项保持默认。点击 OK 按钮保存。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/配置会话处理动作.webp" alt="配置会话处理动作">
+<figcaption aria-hidden="true">配置会话处理动作</figcaption>
+</figure>
+<ol start="10" type="1">
+<li>返回到 Session handling rule
+editor 窗口，切换到 Scope 页签。确保规则应用的工具包含 Intruder，URL
+Scope 中选择 “Include all URLs” 选项。点击 OK 按钮以保存。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/选择规则应用的范围.webp" alt="选择规则应用的范围">
+<figcaption aria-hidden="true">选择规则应用的范围</figcaption>
+</figure>
+<ol start="11" type="1">
+<li>至此，宏命令的配置就完成了，接下来的 intruder 配置和执行破解操作，与<code>常规暴力破解</code>章节的步骤类似，不再赘述。</li>
+</ol>
+<h2 id="测试验证">3.2. 测试验证</h2>
+<ol type="1">
+<li>在发起的 Intruder 中，可看到每一次发起的破解请求中，其携带的 user_token 都是不同的，且有效（如果随机值无效会返回 HTTP302
+Not Found）。</li>
+<li>返回报文中，可看到返回的消息是账号或密码不正确，且 smithy 账号由于尝试登录错误次数过多，已被锁定了。</li>
+</ol>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/破解请求1.webp" alt="破解请求1">
+<figcaption aria-hidden="true">破解请求 1</figcaption>
+</figure>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/破解请求2.webp" alt="破解请求2">
+<figcaption aria-hidden="true"> 破解请求 2</figcaption>
+</figure>
+<figure>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/p/4d632ce4/破解结果.webp" alt="破解结果">
+<figcaption aria-hidden="true"> 破解结果</figcaption>
+</figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn">FantasyBoyce</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://blogs.boycechen.cn/p/4d632ce4.html">https://blogs.boycechen.cn/p/4d632ce4.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blogs.boycechen.cn" target="_blank">FantasyBoyce's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AE%89%E5%85%A8%E6%B5%8B%E8%AF%95/">安全测试</a><a class="post-meta__tags" href="/tags/%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3/">暴力破解</a><a class="post-meta__tags" href="/tags/Burpsuite/">Burpsuite</a><a class="post-meta__tags" href="/tags/intruder/">intruder</a></div><div class="post_share"><div class="social-share" data-image="https://api.dujin.org/pic/fengjing/" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i>赞助</div><div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechatpay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/wechatpay.png" alt="WechatPay"/></a><div class="post-qr-code-desc">WechatPay</div></li><li class="reward-item"><a href="/img/alipay.png" target="_blank"><img class="post-qr-code-img" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/alipay.png" alt="Alipay"/></a><div class="post-qr-code-desc">Alipay</div></li></ul></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/p/a90042eb.html" title="【Security】CSRF 攻击之测试思路总结"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">【Security】CSRF 攻击之测试思路总结</div></div></a></div><div class="next-post pull-right"><a href="/p/bb712987.html" title="【Security】Ubuntu 中基于 DVWA 程序搭建个人安全测试环境"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">【Security】Ubuntu 中基于 DVWA 程序搭建个人安全测试环境</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/p/a90042eb.html" title="【Security】CSRF 攻击之测试思路总结"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Security】CSRF 攻击之测试思路总结</div></div></a></div><div><a href="/p/bb712987.html" title="【Security】Ubuntu 中基于 DVWA 程序搭建个人安全测试环境"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Security】Ubuntu 中基于 DVWA 程序搭建个人安全测试环境</div></div></a></div><div><a href="/p/9db2193f.html" title="【Security】前后台校验之文件上传场景"><img class="cover" src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://api.dujin.org/pic/fengjing/" alt="cover"><div class="content is-center"><div class="date"><i class="fas fa-history fa-fw"></i> 2024-12-30</div><div class="title">【Security】前后台校验之文件上传场景</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="/img/avatar.gif" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">FantasyBoyce</div><div class="author-info__description">博学之，审问之，慎思之</br>明辨之，笃行之！</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">94</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">10</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/fantasyboyce"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/fantasyboyce" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:jasonis0428@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">欢迎来到我的后花园 ヾ (@^▽^@) ノ<br/></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="toc-text">1. 测试工具</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%B8%B8%E8%A7%84%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3"><span class="toc-text">2. 常规暴力破解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B"><span class="toc-text">2.1. 测试流程</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%89%B9%E6%AE%8A%E7%99%BB%E5%BD%95%E8%AF%B7%E6%B1%82%E6%9A%B4%E5%8A%9B%E7%A0%B4%E8%A7%A3"><span class="toc-text">3. 特殊登录请求暴力破解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B-1"><span class="toc-text">3.1. 测试流程</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%B5%8B%E8%AF%95%E9%AA%8C%E8%AF%81"><span class="toc-text">3.2. 测试验证</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/7c8c9cc0.html" title="【MATLAB】自学记录之基于某楼栋房价数据绘制三维网格图">【MATLAB】自学记录之基于某楼栋房价数据绘制三维网格图</a><time datetime="2025-01-15T07:29:44.000Z" title="发表于 2025-01-15 15:29:44">2025-01-15</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/5deb4750.html" title="【MATLAB】自学记录之读取 DEM 高程数据文件并渲染成三维地形图">【MATLAB】自学记录之读取 DEM 高程数据文件并渲染成三维地形图</a><time datetime="2025-01-05T09:11:02.000Z" title="发表于 2025-01-05 17:11:02">2025-01-05</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/d25385bc.html" title="【Python】基于 Python 对十六进制数据进行异或和校验计算">【Python】基于 Python 对十六进制数据进行异或和校验计算</a><time datetime="2024-11-27T08:16:03.000Z" title="发表于 2024-11-27 16:16:03">2024-11-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/a6bafcf7.html" title="【Security】基于 Kali 操作系统的常用安全测试工具学习与使用（更新中）">【Security】基于 Kali 操作系统的常用安全测试工具学习与使用（更新中）</a><time datetime="2024-08-03T13:33:34.000Z" title="发表于 2024-08-03 21:33:34">2024-08-03</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/p/bf4fa918.html" title="【Performance】09. 性能测试技术历练篇之 Java 诊断工具 Arthas">【Performance】09. 性能测试技术历练篇之 Java 诊断工具 Arthas</a><time datetime="2022-11-13T11:32:42.000Z" title="发表于 2022-11-13 19:32:42">2022-11-13</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2025 By FantasyBoyce</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a><br>
+<img src= "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-lazy-src="https://blogs.boycechen.cn/img/beian.png">
+<a href="https://beian.miit.gov.cn/" style="color:#f72b07" target="_blank">湘ICP备20007680号</a>
+</br></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="/js/tw_cn.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@5.2.0/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@17.8.8/dist/lazyload.iife.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.1
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, '']
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.min.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typesetPromise()
+}</script><script>(() => {
+  const $mermaid = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaid.length === 0) return
+  const runMermaid = () => {
+    window.loadMermaid = true
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? '' : ''
+
+    Array.from($mermaid).forEach((item, index) => {
+      const mermaidSrc = item.firstElementChild
+      const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+      const mermaidID = 'mermaid-' + index
+      const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+
+      const renderFn = mermaid.render(mermaidID, mermaidDefinition)
+
+      const renderV10 = () => {
+        renderFn.then(({svg}) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svg)
+        })
+      }
+
+      const renderV9 = svg => {
+        mermaidSrc.insertAdjacentHTML('afterend', svg)
+      }
+
+      typeof renderFn === 'string' ? renderV9(renderFn) : renderV10()
+    })
+  }
+
+  const loadMermaid = () => {
+    window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid@10.8.0/dist/mermaid.min.js').then(runMermaid)
+  }
+
+  btf.addGlobalFn('themeChange', runMermaid, 'mermaid')
+
+  window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+})()</script></div><div class="aplayer no-destroy" data-id="8001067963" data-server="tencent" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="random" data-preload="auto" data-autoplay="false" muted></div><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-heart.min.js" async="async" mobile="false"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: true,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjax')
+  btf.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '187660263', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
